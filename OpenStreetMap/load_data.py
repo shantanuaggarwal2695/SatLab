@@ -14,9 +14,9 @@ class LoadOSM:
         nodes = self.spark.read.parquet(self.path + "argentina-latest.osm.pbf.node.parquet")
         nodes = nodes.selectExpr("id", "tags", "CONCAT(longitude, ',',  latitude) as geomText")
         nodes = nodes.select("id", "geomText", "tags")
-        nodes = nodes.select("id", "geomText", explode("tags")).selectExpr("id",
-                                                                           "ST_PointFromText(geomtext, ',') as Geometry",
-                                                                           "col as attribute")
+        # nodes = nodes.select("id", "geomText", explode("tags")).selectExpr("id",
+        #                                                                    "ST_PointFromText(geomtext, ',') as Geometry",
+        #                                                                    "col as attribute")
         return nodes
 
     def getlen(self, col):
