@@ -72,6 +72,9 @@ class LoadOSM:
     def transform(self):
         nodes = self.getNodes()
         ways = self.getWays()
+        nodes = nodes.select("id", "geomText", explode("tags")).selectExpr("id",
+                                                                           "ST_PointFromText(geomtext, ',') as Geometry",
+                                                                           "col as attribute")
         nodes = nodes.select(
             "*", f.col("attribute")["key"].alias("key"), f.col("attribute")["value"].alias("value"))
         ways = ways.select(
