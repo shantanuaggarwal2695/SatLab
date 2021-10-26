@@ -46,13 +46,14 @@ def initiate_session():
 
 if __name__ == '__main__':
     spark = initiate_session()
+    
     # Load training data for the application
     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
     train = loader.load_geotiff()
     train.show(2)
 
     # Prepare OSM data
-    OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/", spark)
+    OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
     points, polygons = OSM.transform()
     points.show(2)
     polygons.show(2)
