@@ -19,6 +19,7 @@ from sedona.utils.adapter import Adapter
 from sedona.core.spatialOperator import KNNQuery
 from shapely.geometry import Point
 import pyspark.sql.functions as f
+from Loading.geotiff_loader import *
 
 
 def initiate_session():
@@ -43,5 +44,9 @@ def initiate_session():
 
 
 if __name__ == '__main__':
-    initiate_session()
+    spark = initiate_session()
+
+    loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
+    train = loader.load_geotiff()
+    train.show(2)
 
