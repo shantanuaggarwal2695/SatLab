@@ -49,6 +49,8 @@ class LoadOSM:
             "*", f.col("col")["index"].alias("index"), f.col("col")["nodeId"].alias("nodeId")
         )
         ways.createOrReplaceTempView("ways")
+        nodes = self.getNodes()
+        nodes.createOrReplaceTempView("points")
         waysJoinnodes = self.spark.sql(
             "Select ways.id as waysId,points.id as nodeId,ways.index as nodeindex, ways.tags as tags,points.geomText as geomText from points JOIN ways ON points.id=ways.nodeId")
         waysJoinnodes = waysJoinnodes.withColumn("index_geom", f.array(f.col("nodeindex"), f.col("geomText"))).select(

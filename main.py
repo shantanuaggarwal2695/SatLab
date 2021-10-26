@@ -46,7 +46,7 @@ def initiate_session():
 
 if __name__ == '__main__':
     spark = initiate_session()
-    
+
     # Load training data for the application
     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
     train = loader.load_geotiff()
