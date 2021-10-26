@@ -19,9 +19,11 @@ class LoadOSM:
         #                                                                    "col as attribute")
         return nodes
 
+    @staticmethod
     def getlen(self, col):
         return len(col)
 
+    @staticmethod
     def constructGeometry(self, col):
         temp = []
         col = sorted(col, key=lambda x: int(x[0]))
@@ -31,6 +33,7 @@ class LoadOSM:
         temp.append(first_geom)
         return ",".join(temp)
 
+    @staticmethod
     def getString(hexa):
         return hexa.decode()
 
