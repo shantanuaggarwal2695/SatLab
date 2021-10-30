@@ -40,6 +40,7 @@ def initiate_session():
         getOrCreate()
     SedonaRegistrator.registerAll(spark)
     # sc = spark.sparkContext
+    # sc.addPyFile("/hdd2/shantanuCodeData/")
 
     return spark
 
