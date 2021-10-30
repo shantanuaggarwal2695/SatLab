@@ -7,7 +7,7 @@ setup.py
 .idea/vcs.xml
 .idea/inspectionProfiles/Project_Default.xml
 .idea/inspectionProfiles/profiles_settings.xml
-dist/spark_job-0.1.0-py3.7.egg
+dist/experiment-0.1.0-py3.7.egg
 experiment.egg-info/PKG-INFO
 experiment.egg-info/SOURCES.txt
 experiment.egg-info/dependency_links.txt
