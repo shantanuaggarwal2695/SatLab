@@ -9,5 +9,6 @@ setup(
     author='Shantanu Aggarwal',
     author_email='saggar24@asu.edu',
     url='https://github.com/shantanuaggarwal2695/SatLab',
-    packages=find_packages(exclude=['*tests*']),
+    packages=['spark_job'],
+    py_moudles=['__main__']
 )
