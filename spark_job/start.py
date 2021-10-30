@@ -44,10 +44,8 @@ def initiate_session():
     return spark
 
 
-if __name__ == '__main__':
-    spark = initiate_session()
 
-    # Load training data for the application
+def run_experiment(spark):
     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
     train = loader.load_geotiff()
     train.show(2)
@@ -57,5 +55,8 @@ if __name__ == '__main__':
     points, polygons = OSM.transform()
     points.show(2)
     polygons.show(2)
+
+
+
 
 
