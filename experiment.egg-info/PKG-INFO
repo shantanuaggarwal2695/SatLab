@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: experiment
+Version: 0.1.0
+Summary: A short description
+Home-page: https://github.com/shantanuaggarwal2695/SatLab
+Author: Shantanu Aggarwal
+Author-email: saggar24@asu.edu
+License: UNKNOWN
+Description: I would just open("README.md").read() here
+Platform: UNKNOWN

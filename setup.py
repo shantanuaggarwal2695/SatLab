@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name='spark_job',
+    name='experiment',
     version='0.1.0',
     description='A short description',
     long_description='I would just open("README.md").read() here',
