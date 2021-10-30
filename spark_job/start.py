@@ -1,26 +1,5 @@
-import os
-from IPython.display import display, HTML
-from pyspark.sql import SparkSession
-from pyspark import StorageLevel
-import geopandas as gpd
-import pandas as pd
-from pyspark.sql.types import StructType
-from pyspark.sql.types import StructField
-from pyspark.sql.types import LongType
-from pyspark.sql.types import IntegerType, DoubleType
-from pyspark.sql.functions import regexp_replace
-from sedona.register import SedonaRegistrator
-from sedona.utils import SedonaKryoRegistrator, KryoSerializer
-from sedona.utils import SedonaKryoRegistrator, KryoSerializer
-#from pyspark.sql.functions import udf, lit, explode
-from pyspark import StorageLevel
-import seaborn as sns
-from sedona.utils.adapter import Adapter
-from sedona.core.spatialOperator import KNNQuery
-from shapely.geometry import Point
-import pyspark.sql.functions as f
-from Loading.geotiff_loader import *
-from OpenStreetMap.load_data import *
+# from Loading.geotiff_loader import *
+# from OpenStreetMap.load_data import *
 
 
 # def initiate_session():
@@ -46,16 +25,16 @@ from OpenStreetMap.load_data import *
 
 
 
-def run_experiment(spark):
-    loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
-    train = loader.load_geotiff()
-    train.show(2)
-
-    # Prepare OSM data
-    OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
-    points, polygons = OSM.transform()
-    points.show(2)
-    polygons.show(2)
+# def run_experiment(spark):
+#     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
+#     train = loader.load_geotiff()
+#     train.show(2)
+#
+#     # Prepare OSM data
+#     OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
+#     points, polygons = OSM.transform()
+#     points.show(2)
+#     polygons.show(2)
 
 
 

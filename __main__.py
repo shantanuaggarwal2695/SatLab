@@ -3,6 +3,7 @@ from sedona.register import SedonaRegistrator
 from sedona.utils import KryoSerializer, SedonaKryoRegistrator
 
 
+
 def initiate_session():
     spark = SparkSession. \
         builder. \
@@ -24,8 +25,29 @@ def initiate_session():
 
     return spark
 
+# def run_experiment(spark):
+#     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
+#     train = loader.load_geotiff()
+#     train.show(2)
+#
+#     # Prepare OSM data
+#     OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
+#     points, polygons = OSM.transform()
+#     points.show(2)
+#     polygons.show(2)
+
+
 if __name__ == '__main__':
 
     spark = initiate_session()
-    from spark_job import start
-    start.run_experiment(spark)
+    from spark_job.Loading.geotiff_loader import Loader
+    from spark_job.OpenStreetMap.load_data import LoadOSM
+
+    loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
+    train = loader.load_geotiff()
+    train.show(2)
+
+    OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
+    points, polygons = OSM.transform()
+    points.show(2)
+    polygons.show(2)
