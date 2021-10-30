@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from sedona.utils import SedonaKryoRegistrator, KryoSerializer
 from sedona.register import SedonaRegistrator
-
+import os
 def initiate_session():
     spark = SparkSession. \
         builder. \
@@ -26,6 +26,7 @@ def initiate_session():
 
 if __name__ == '__main__':
 
+    os.environ['SPARK_HOME'] = "/hdd2/shantanuCodeData/lib/spark-3.1.1-bin-hadoop2.7"
     spark = initiate_session()
     from spark_job import start
     start.run_experiment(spark)
