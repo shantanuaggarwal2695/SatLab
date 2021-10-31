@@ -73,7 +73,7 @@ class LoadOSM:
         nodes = self.getNodes()
         ways = self.getWays()
 
-        return nodes, ""
+        return nodes, ways
         # nodes = nodes.select("id", "geomText", explode("tags")).selectExpr("id",
         #                                                                    "ST_PointFromText(geomtext, ',') as Geometry",
         #                                                                    "col as attribute")

@@ -50,4 +50,4 @@ if __name__ == '__main__':
     OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
     points, polygons = OSM.transform()
     points.show(2)
-    # polygons.show(2)
+    polygons.show(2)
