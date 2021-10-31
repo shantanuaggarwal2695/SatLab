@@ -19,31 +19,31 @@ class LoadOSM:
         #                                                                    "col as attribute")
         return nodes
 
-    @staticmethod
-    def getlen(self, col):
-        return len(col)
-
-    @staticmethod
-    def constructGeometry(self, col):
-        temp = []
-        col = sorted(col, key=lambda x: int(x[0]))
-        first_geom = col[0][1]
-        for arr in col:
-            temp.append(arr[1])
-        temp.append(first_geom)
-        return ",".join(temp)
-
-    @staticmethod
-    def getString(hexa):
-        return hexa.decode()
-
-    def registerUDF(self):
-        length = udf(self.getlen, IntegerType())
-        self.spark.udf.register("ColLen", length)
-        geom = udf(self.constructGeometry, StringType())
-        self.spark.udf.register("GetGeom", geom)
-        convert = udf(self.getString, StringType())
-        self.spark.udf.register("RS_Convert", convert)
+    # @staticmethod
+    # def getlen(self, col):
+    #     return len(col)
+    #
+    # @staticmethod
+    # def constructGeometry(self, col):
+    #     temp = []
+    #     col = sorted(col, key=lambda x: int(x[0]))
+    #     first_geom = col[0][1]
+    #     for arr in col:
+    #         temp.append(arr[1])
+    #     temp.append(first_geom)
+    #     return ",".join(temp)
+    #
+    # @staticmethod
+    # def getString(hexa):
+    #     return hexa.decode()
+    #
+    # def registerUDF(self):
+    #     length = udf(self.getlen, IntegerType())
+    #     self.spark.udf.register("ColLen", length)
+    #     geom = udf(self.constructGeometry, StringType())
+    #     self.spark.udf.register("GetGeom", geom)
+    #     convert = udf(self.getString, StringType())
+    #     self.spark.udf.register("RS_Convert", convert)
 
 
     def getWays(self):
@@ -59,7 +59,24 @@ class LoadOSM:
         waysJoinnodes = waysJoinnodes.withColumn("index_geom", f.array(f.col("nodeindex"), f.col("geomText"))).select(
             "waysId", "nodeId", "tags", "index_geom")
         waysJoinnodes = waysJoinnodes.groupBy("waysId").agg(f.collect_set("index_geom").alias('array_geom'))
-        self.registerUDF()
+
+        def getlen(self, col):
+            return len(col)
+
+        def constructGeometry(self, col):
+            temp = []
+            col = sorted(col, key=lambda x: int(x[0]))
+            first_geom = col[0][1]
+            for arr in col:
+                temp.append(arr[1])
+            temp.append(first_geom)
+            return ",".join(temp)
+
+        length = udf(getlen, IntegerType())
+        self.spark.udf.register("ColLen", length)
+        geom = udf(constructGeometry, StringType())
+        self.spark.udf.register("GetGeom", geom)
+
         waysJoinnodes = waysJoinnodes.selectExpr("waysId", "array_geom", "ColLen(array_geom) as length").where(
             "length>=3").selectExpr("waysId", "array_geom", "GetGeom(array_geom) as Geometry")
         waysJoinnodes.createOrReplaceTempView("waysjoin")
@@ -83,14 +100,15 @@ class LoadOSM:
         def getString(hexa):
             return hexa.decode()
         convert = udf(getString, StringType())
+
         self.spark.udf.register("RS_Convert", convert)
 
-        # ways = ways.select(
-        #     "*", f.col("attribute")["key"].alias("key"), f.col("attribute")["value"].alias("value"))
+        ways = ways.select(
+            "*", f.col("attribute")["key"].alias("key"), f.col("attribute")["value"].alias("value"))
         points = nodes.selectExpr("id", "Geometry", "RS_Convert(key) as attr_key",
                                                "RS_Convert(value) as attr_value")
-        # polygons = ways.selectExpr("id", "Geometry", "RS_Convert(key) as attr_key", "RS_Convert(value) as attr_value")
-        return points , ""
+        polygons = ways.selectExpr("id", "Geometry", "RS_Convert(key) as attr_key", "RS_Convert(value) as attr_value")
+        return points , polygons
 
 
 
