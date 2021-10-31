@@ -22,7 +22,7 @@ class SpatialFunctions:
         healthcare_data = healthcare_points.union(healthcare_polygons)
         healthcare_data = healthcare_data.selectExpr("id", "ST_Transform(Geometry, 'epsg:4326','epsg:3857') as Geometry",
                                                  "attr_key", "attr_value")
-        healthcare_data.createOrReplaceTempView("temp_healthcare")
+        healthcare_data.createOrReplaceTempView("new_healthcare")
 
         # Spatial Feature Extraction
         hpoints2 = self.spark.sql(
