@@ -243,17 +243,17 @@ class SpatialFunctions:
             "Select origin,first(lf14.Geom) as Geom, AVG(lf14.distance) as distance_green from lf14 GROUP BY origin")
         return labeling_function_14
 
-    def combine(self, df):
-        df[0].createOrReplaceTempView("domain1")
-        df[1].createOrReplaceTempView("domain2")
-        df[2].createOrReplaceTempView("domain3")
-        df[3].createOrReplaceTempView("domain4")
-        df[4].createOrReplaceTempView("domain5")
-        df[5].createOrReplaceTempView("domain6")
-        df[6].createOrReplaceTempView("domain7")
-        df[7].createOrReplaceTempView("domain8")
-        df[8].createOrReplaceTempView("domain9")
-        df[9].createOrReplaceTempView("domain10")
+    def combine(self):
+        self.healthcare().createOrReplaceTempView("domain1")
+        self.shopping_malls().createOrReplaceTempView("domain2")
+        self.schools().createOrReplaceTempView("domain3")
+        self.waste().createOrReplaceTempView("domain4")
+        self.roads().createOrReplaceTempView("domain5")
+        self.forest().createOrReplaceTempView("domain6")
+        self.residential().createOrReplaceTempView("domain7")
+        self.power().createOrReplaceTempView("domain8")
+        self.resorts().createOrReplaceTempView("domain9")
+        self.grasslands().createOrReplaceTempView("domain10")
         geo_features = self.spark.sql(
             "select domain1.origin, domain1.Geom, domain1.distance_health as healthcare, domain2.distance_malls as malls, domain3.distance_schools as schools, domain4.distance_waste as waste, domain5.distance_road as road, domain6.distance_forest as forest, domain7.distance_res as residential, domain8.distance_pow as power, domain9.distance_resort as resort, domain10.distance_green as greenland from domain1 JOIN domain2 JOIN domain3 JOIN domain4 JOIN domain5 JOIN domain6 JOIN domain7 JOIN domain8 JOIN domain9 JOIN domain10 ON (domain1.Geom = domain2.Geom AND domain1.Geom = domain3.Geom AND domain1.Geom = domain4.Geom AND domain1.Geom = domain5.Geom AND domain1.Geom = domain6.Geom AND domain1.Geom = domain7.Geom AND domain1.Geom = domain8.Geom AND domain1.Geom=domain9.Geom AND domain1.Geom=domain10.Geom)")
         geo_features.persist()
