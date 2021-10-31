@@ -13,7 +13,7 @@ class SpatialFunctions:
         self.train.createOrReplaceTempView("train")
 
 
-    def healthcare(self, ):
+    def healthcare(self):
         healthcare_points = self.osm_points.filter((self.osm_points.attr_key == "healthcare") & (self.osm_points.attr_value == "hospital"))
 
         healthcare_polygons = self.osm_polygons.filter((self.osm_polygons.attr_key == "healthcare") & (self.osm_polygons.attr_value == "hospital")).selectExpr("id",
@@ -34,8 +34,8 @@ class SpatialFunctions:
 
 
     def shopping_malls(self):
-        polygons_malls = self.polygons.filter((self.polygons.attr_key == "shop") & (self.polygons.attr_value == "mall"))
-        points_malls = self.points.filter((self.points.attr_key == "shop") & (self.points.attr_value == "mall"))
+        polygons_malls = self.osm_polygons.filter((self.osm_polygons.attr_key == "shop") & (self.osm_polygons.attr_value == "mall"))
+        points_malls = self.osm_points.filter((self.osm_points.attr_key == "shop") & (self.osm_points.attr_value == "mall"))
 
         mall_data = points_malls.union(polygons_malls)
         mall_data = mall_data.selectExpr("id", "ST_Transform(Geometry, 'epsg:4326','epsg:3857') as Geometry",
