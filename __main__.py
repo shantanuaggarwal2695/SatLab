@@ -48,7 +48,6 @@ if __name__ == '__main__':
     train.show(2)
 
     OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
-    OSM.registerUDF()
     points, polygons = OSM.transform()
     points.show(2)
     #polygons.show(2)

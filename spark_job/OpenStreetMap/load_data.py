@@ -79,6 +79,12 @@ class LoadOSM:
                                                                            "col as attribute")
         nodes = nodes.select(
             "*", f.col("attribute")["key"].alias("key"), f.col("attribute")["value"].alias("value"))
+
+        def getString(hexa):
+            return hexa.decode()
+        convert = udf(getString, StringType())
+        self.spark.udf.register("RS_Convert", convert)
+
         # ways = ways.select(
         #     "*", f.col("attribute")["key"].alias("key"), f.col("attribute")["value"].alias("value"))
         points = nodes.selectExpr("id", "Geometry", "RS_Convert(key) as attr_key",
