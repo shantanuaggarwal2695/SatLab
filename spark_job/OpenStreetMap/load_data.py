@@ -60,10 +60,10 @@ class LoadOSM:
             "waysId", "nodeId", "tags", "index_geom")
         waysJoinnodes = waysJoinnodes.groupBy("waysId").agg(f.collect_set("index_geom").alias('array_geom'))
 
-        def getlen(self, col):
+        def getlen(col):
             return len(col)
 
-        def constructGeometry(self, col):
+        def constructGeometry(col):
             temp = []
             col = sorted(col, key=lambda x: int(x[0]))
             first_geom = col[0][1]
