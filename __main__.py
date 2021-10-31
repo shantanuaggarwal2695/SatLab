@@ -53,7 +53,7 @@ if __name__ == '__main__':
     points.show(2)
     polygons.show(2)
 
-    Spatial = SpatialFunctions(points, polygons, spark)
+    Spatial = SpatialFunctions(points, polygons, spark, train)
     geo_df = Spatial.combine()
     geo_df.show(2)
 

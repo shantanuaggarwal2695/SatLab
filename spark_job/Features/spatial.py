@@ -5,12 +5,15 @@ from pyspark.sql.functions import udf
 from pyspark.sql.types import DoubleType
 
 class SpatialFunctions:
-    def __init__(self, points, polygons, spark):
+    def __init__(self, points, polygons, spark, train):
         self.osm_points = points
         self.osm_polygons = polygons
         self.spark = spark
+        self.train = train
+        self.train.createOrReplaceTempView("train")
 
-    def healthcare(self):
+
+    def healthcare(self, ):
         healthcare_points = self.osm_points.filter((self.osm_points.attr_key == "healthcare") & (self.osm_points.attr_value == "hospital"))
 
         healthcare_polygons = self.osm_polygons.filter((self.osm_polygons.attr_key == "healthcare") & (self.osm_polygons.attr_value == "hospital")).selectExpr("id",
