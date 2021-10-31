@@ -81,10 +81,10 @@ class LoadOSM:
             "*", f.col("attribute")["key"].alias("key"), f.col("attribute")["value"].alias("value"))
         # ways = ways.select(
         #     "*", f.col("attribute")["key"].alias("key"), f.col("attribute")["value"].alias("value"))
-        points = nodes.selectExpr("id", "Geometry", "RS_Convert(key) as attr_key",
-                                               "RS_Convert(value) as attr_value")
+        # points = nodes.selectExpr("id", "Geometry", "RS_Convert(key) as attr_key",
+        #                                        "RS_Convert(value) as attr_value")
         # polygons = ways.selectExpr("id", "Geometry", "RS_Convert(key) as attr_key", "RS_Convert(value) as attr_value")
-        return points , ""
+        return nodes , ""
 
 
 
