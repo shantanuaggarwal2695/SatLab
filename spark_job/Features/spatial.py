@@ -11,6 +11,8 @@ class SpatialFunctions:
         self.spark = spark
         self.train = train
         self.train.createOrReplaceTempView("train")
+        base_point = self.spark.sql("Select ST_Transform(ST_PointFromText('-58.381592,-34.603722',','), 'epsg:4326','epsg:3857') as Geom")
+        base_point.createOrReplaceTempView("bs")
 
 
     def healthcare(self):
@@ -40,7 +42,7 @@ class SpatialFunctions:
         mall_data = points_malls.union(polygons_malls)
         mall_data = mall_data.selectExpr("id", "ST_Transform(Geometry, 'epsg:4326','epsg:3857') as Geometry",
                                          "attr_key", "attr_value")
-        mall_data = mall_data.repartition(2000)
+        # mall_data = mall_data.repartition(2000)
         mall_data.persist()
         mall_data.createOrReplaceTempView("temp_malls")
 
