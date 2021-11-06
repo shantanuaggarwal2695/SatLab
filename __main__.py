@@ -43,6 +43,7 @@ if __name__ == '__main__':
     from spark_job.Loading.geotiff_loader import Loader
     from spark_job.OpenStreetMap.load_data import LoadOSM
     from spark_job.Features.spatial import SpatialFunctions
+    from spark_job.Features.UDF import *
 
     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
     train = loader.load_geotiff()
@@ -56,5 +57,9 @@ if __name__ == '__main__':
     Spatial = SpatialFunctions(points, polygons, spark, train)
     geo_df = Spatial.combine()
     geo_df.show(2)
+
+    register_udf(spark)
+
+
 
 
