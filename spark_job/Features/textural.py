@@ -8,7 +8,8 @@ class TexturalFunctions:
     def __init__(self, df, spark):
         self.dataframe = df.selectExpr("origin","Geom","RS_Normalize(RS_GetBand(data, 1,bands)) as Band1","RS_Normalize(RS_GetBand(data, 2,bands)) as Band2","RS_Normalize(RS_GetBand(data, 3,bands)) as Band3", "RS_Normalize(RS_GetBand(data, 4,bands)) as Band4")
         self.spark = spark
-        self.dataframe = self.dataframe.selectExpr("origin", "Geom", "RS_Convert(Band3, Band2, Band1) as gray_scale")
+
+
 
 
     def extract_features(self):
@@ -97,6 +98,7 @@ class TexturalFunctions:
         self.spark.udf.register("GLCM_Energy", GLCM_Energy, DoubleType())
         self.spark.udf.register("RS_Convert", rgbtograyscale, ArrayType(IntegerType()))
 
+        self.dataframe = self.dataframe.selectExpr("origin", "Geom", "RS_Convert(Band3, Band2, Band1) as gray_scale")
         glcm_features_df = self.dataframe.selectExpr("origin", "Geom",
                                                     "GLCM_Contrast(gray_scale) as glcm_contrast",
                                                     "GLCM_Dis(gray_scale) as glcm_dissimilarity",
