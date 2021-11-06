@@ -137,7 +137,7 @@ class TexturalFunctions:
         glcm_features_df = df.select("origin", "Geom", "glcm_contrast_Scaled",
                                                    "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
                                                    "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
-        glcm_features_df.show(2)
+        return glcm_features_df
 
 
 
