@@ -1,5 +1,5 @@
 import numpy as np
-from pyspark.sql.types import DoubleType
+from pyspark.sql.types import DoubleType, ArrayType, IntegerType
 from skimage.feature import greycomatrix
 from skimage.feature import greycoprops as gc
 
@@ -78,6 +78,11 @@ def GLCM_ASM(pixels):
     feature = gc(glcm, "ASM")
     return sum(feature[0].tolist())/len(feature[0].tolist())
 
+def rgbtograyscale(red, green, blue):
+    a = (0.299*np.array(red) + 0.587*np.array(green) + 0.114*np.array(blue)).tolist()
+    b = [round(x) for x in a]
+    return b
+
 
 def register_udf(spark):
     spark.udf.register("GLCM_Contrast", GLCM_Contrast,DoubleType())
@@ -86,3 +91,4 @@ def register_udf(spark):
     spark.udf.register("GLCM_ASM", GLCM_ASM, DoubleType())
     spark.udf.register("GLCM_Corr", GLCM_Correlation, DoubleType())
     spark.udf.register("GLCM_Energy", GLCM_Energy, DoubleType())
+    spark.udf.register("RS_Convert", rgbtograyscale, ArrayType(IntegerType()))

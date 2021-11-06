@@ -3,28 +3,29 @@ from skimage.feature import greycomatrix
 from skimage.feature import greycoprops as gc
 
 
-class Textural_Features:
+class TexturalFunctions:
     def __init__(self, df, spark):
-        self.dataframe = df
+        self.dataframe = df.selectExpr("origin","Geom","RS_Normalize(RS_GetBand(data, 1,bands)) as Band1","RS_Normalize(RS_GetBand(data, 2,bands)) as Band2","RS_Normalize(RS_GetBand(data, 3,bands)) as Band3", "RS_Normalize(RS_GetBand(data, 4,bands)) as Band4")
         self.spark = spark
+        self.dataframe = self.dataframe.selectExpr("origin", "Geom", "RS_Convert(Band3, Band2, Band1) as gray_scale")
+
+
+    def extract_features(self):
+        glcm_features_df = self.dataframe.selectExpr("origin", "Geom",
+                                                    "GLCM_Contrast(gray_scale) as glcm_contrast",
+                                                    "GLCM_Dis(gray_scale) as glcm_dissimilarity",
+                                                    "GLCM_Hom(gray_scale) as glcm_homogeneity",
+                                                    "GLCM_Energy(gray_scale) as glcm_energy",
+                                                    "GLCM_Corr(gray_scale) as glcm_correlation",
+                                                    "GLCM_ASM(gray_scale) as glcm_ASM")
+
+        return glcm_features_df
 
 
 
 
-    def GLCM_Contrast(self):
-        def contrast(pixels):
-            mi, ma = 0, 255
-            ks = 5
-            h, w = 32, 32
-            nbit = 8
-            bins = np.linspace(mi, ma + 1, nbit + 1)
-            bin_image = np.digitize(pixels, bins) - 1
-            new_image = np.reshape(bin_image, (32, 32))
-            glcm = greycomatrix(new_image, [1], [0, np.pi / 4, np.pi / 2], levels=8, normed=True, symmetric=True)
-            feature = gc(glcm, "contrast")
-            return sum(feature[0].tolist()) / len(feature[0].tolist())
 
-            self.spark.udf.register("GLCM_Contrast", contrast, DoubleType())
+
 
 
 
