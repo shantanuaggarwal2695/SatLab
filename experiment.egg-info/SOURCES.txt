@@ -17,7 +17,6 @@ spark_job.egg-info/PKG-INFO
 spark_job.egg-info/SOURCES.txt
 spark_job.egg-info/dependency_links.txt
 spark_job.egg-info/top_level.txt
-spark_job/Features/UDF.py
 spark_job/Features/spatial.py
 spark_job/Features/textural.py
 spark_job/Loading/geotiff_loader.py
