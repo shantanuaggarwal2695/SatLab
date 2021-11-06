@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # geo_df.show(2)
 
     textural = TexturalFunctions(train, spark)
-    textural_features = textural.extract_features()
+    textural_features = textural.combine()
     textural_features.show(2)
 
 

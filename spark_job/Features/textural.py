@@ -1,4 +1,7 @@
 import numpy as np
+from pyspark.ml import Pipeline
+from pyspark.ml.feature import VectorAssembler, MinMaxScaler
+from pyspark.sql.functions import udf
 from pyspark.sql.types import DoubleType, ArrayType, IntegerType
 from skimage.feature import greycomatrix
 from skimage.feature import greycoprops as gc
@@ -109,7 +112,32 @@ class TexturalFunctions:
 
         return glcm_features_df
 
+    def combine(self):
+        df = self.extract_features()
+        unlist = udf(lambda x: round(float(list(x)[0]), 3), DoubleType())
 
+        # Iterating over columns to be scaled
+        for i in ["glcm_contrast", "glcm_dissimilarity", "glcm_homogeneity", "glcm_energy", "glcm_correlation",
+                  "glcm_ASM"]:
+            # VectorAssembler Transformation - Converting column to vector type
+            assembler = VectorAssembler(inputCols=[i], outputCol=i + "_Vect")
+
+            # MinMaxScaler Transformation
+            scaler = MinMaxScaler(inputCol=i + "_Vect", outputCol=i + "_Scaled")
+
+            # Pipeline of VectorAssembler and MinMaxScaler
+            pipeline = Pipeline(stages=[assembler, scaler])
+
+            # Fitting pipeline on dataframe
+            df = pipeline.fit(df).transform(df).withColumn(i + "_Scaled",
+                                                                                                     unlist(
+                                                                                                         i + "_Scaled")).drop(
+                i + "_Vect")
+
+        glcm_features_df = df.select("origin", "Geom", "glcm_contrast_Scaled",
+                                                   "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
+                                                   "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
+        glcm_features_df.show(2)
 
 
 
