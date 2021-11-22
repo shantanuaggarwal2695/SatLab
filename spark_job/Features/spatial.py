@@ -5,10 +5,15 @@ from pyspark.sql.functions import udf
 from pyspark.sql.types import DoubleType
 
 class SpatialFunctions:
-    def __init__(self, points, polygons, spark):
+    def __init__(self, points, polygons, train, spark):
         self.osm_points = points
         self.osm_polygons = polygons
         self.spark = spark
+        self.train = train
+        self.train.createOrReplaceTempView("train")
+        bs_df = self.spark.sql(
+            "Select ST_Transform(ST_PointFromText('-58.381592,-34.603722',','), 'epsg:4326','epsg:3857') as Geom")
+        bs_df.createOrReplaceTempView("bs")
 
     def healthcare(self):
         healthcare_points = self.osm_points.filter((self.osm_points.attr_key == "healthcare") & (self.osm_points.attr_value == "hospital"))
@@ -20,6 +25,17 @@ class SpatialFunctions:
         healthcare_data = healthcare_data.selectExpr("id", "ST_Transform(Geometry, 'epsg:4326','epsg:3857') as Geometry",
                                                  "attr_key", "attr_value")
         healthcare_data.createOrReplaceTempView("temp_healthcare")
+
+        max_distance = self.spark.sql(
+            "Select train.Geom, bs.Geom as fixed_Geom,ST_Distance(train.Geom, bs.Geom)/1000 as distance from train, bs ")
+        max_distance.createOrReplaceTempView("distance_view")
+        max_distance_ = self.spark.sql(
+            "Select Geom, fixed_Geom , distance from distance_view where distance = (Select max(distance) from distance_view)")
+        max_distance_.show()
+        max_distance_.createOrReplaceTempView("max_geom_distance")
+        nearest_healthcare_points = self.spark.sql(
+            "SELECT temp_healthcare.Geometry, ST_Distance(temp_healthcare.Geometry, bs.Geom)/1000 AS distance FROM temp_healthcare,bs where ST_Distance(temp_healthcare.Geometry, bs.Geom)/1000<=185")
+        nearest_healthcare_points.createOrReplaceTempView("new_healthcare")
 
         # Spatial Feature Extraction
         hpoints2 = self.spark.sql(
@@ -243,18 +259,19 @@ class SpatialFunctions:
             "Select origin,first(lf14.Geom) as Geom, AVG(lf14.distance) as distance_green from lf14 GROUP BY origin")
         return labeling_function_14
 
-    def combine(self, df):
-        df[0].createOrReplaceTempView("domain1")
-        df[1].createOrReplaceTempView("domain2")
-        df[2].createOrReplaceTempView("domain3")
-        df[3].createOrReplaceTempView("domain4")
-        df[4].createOrReplaceTempView("domain5")
-        df[5].createOrReplaceTempView("domain6")
-        df[6].createOrReplaceTempView("domain7")
-        df[7].createOrReplaceTempView("domain8")
-        df[8].createOrReplaceTempView("domain9")
-        df[9].createOrReplaceTempView("domain10")
+    def combine(self):
+        self.healthcare().createOrReplaceTempView("domain1")
+        self.shopping_malls().createOrReplaceTempView("domain2")
+        self.schools().createOrReplaceTempView("domain3")
+        self.waste().createOrReplaceTempView("domain4")
+        self.roads().createOrReplaceTempView("domain5")
+        self.forest().createOrReplaceTempView("domain6")
+        self.residential().createOrReplaceTempView("domain7")
+        self.power().createOrReplaceTempView("domain8")
+        self.resorts().createOrReplaceTempView("domain9")
+        self.grasslands().createOrReplaceTempView("domain10")
         geo_features = self.spark.sql(
+
             "select domain1.origin, domain1.Geom, domain1.distance_health as healthcare, domain2.distance_malls as malls, domain3.distance_schools as schools, domain4.distance_waste as waste, domain5.distance_road as road, domain6.distance_forest as forest, domain7.distance_res as residential, domain8.distance_pow as power, domain9.distance_resort as resort, domain10.distance_green as greenland from domain1 JOIN domain2 JOIN domain3 JOIN domain4 JOIN domain5 JOIN domain6 JOIN domain7 JOIN domain8 JOIN domain9 JOIN domain10 ON (domain1.Geom = domain2.Geom AND domain1.Geom = domain3.Geom AND domain1.Geom = domain4.Geom AND domain1.Geom = domain5.Geom AND domain1.Geom = domain6.Geom AND domain1.Geom = domain7.Geom AND domain1.Geom = domain8.Geom AND domain1.Geom=domain9.Geom AND domain1.Geom=domain10.Geom)")
         geo_features.persist()
 

@@ -1,45 +1,12 @@
+# Stubs for pyspark.ml.clustering (Python 3)
 #
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
 
 from typing import Any, List, Optional
 
 from pyspark.ml.linalg import Matrix, Vector
-from pyspark.ml.util import (
-    GeneralJavaMLWritable,
-    HasTrainingSummary,
-    JavaMLReadable,
-    JavaMLWritable,
-)
+from pyspark.ml.util import *
 from pyspark.ml.wrapper import JavaEstimator, JavaModel, JavaParams, JavaWrapper
-from pyspark.ml.param.shared import (
-    HasAggregationDepth,
-    HasCheckpointInterval,
-    HasDistanceMeasure,
-    HasFeaturesCol,
-    HasMaxIter,
-    HasPredictionCol,
-    HasProbabilityCol,
-    HasSeed,
-    HasTol,
-    HasWeightCol,
-)
-
-from pyspark.ml.param import Param
+from pyspark.ml.param.shared import *
 from pyspark.ml.stat import MultivariateGaussian
 from pyspark.sql.dataframe import DataFrame
 
@@ -72,7 +39,6 @@ class _GaussianMixtureParams(
     HasWeightCol,
 ):
     k: Param[int]
-    def __init__(self, *args: Any): ...
     def getK(self) -> int: ...
 
 class GaussianMixtureModel(
@@ -161,7 +127,6 @@ class _KMeansParams(
     k: Param[int]
     initMode: Param[str]
     initSteps: Param[int]
-    def __init__(self, *args: Any): ...
     def getK(self) -> int: ...
     def getInitMode(self) -> str: ...
     def getInitSteps(self) -> int: ...
@@ -232,7 +197,6 @@ class _BisectingKMeansParams(
 ):
     k: Param[int]
     minDivisibleClusterSize: Param[float]
-    def __init__(self, *args: Any): ...
     def getK(self) -> int: ...
     def getMinDivisibleClusterSize(self) -> float: ...
 
@@ -305,7 +269,6 @@ class _LDAParams(HasMaxIter, HasFeaturesCol, HasSeed, HasCheckpointInterval):
     topicConcentration: Param[float]
     topicDistributionCol: Param[str]
     keepLastCheckpoint: Param[bool]
-    def __init__(self, *args: Any): ...
     def setK(self, value: int) -> LDA: ...
     def getOptimizer(self) -> str: ...
     def getLearningOffset(self) -> float: ...
@@ -396,7 +359,6 @@ class _PowerIterationClusteringParams(HasMaxIter, HasWeightCol):
     initMode: Param[str]
     srcCol: Param[str]
     dstCol: Param[str]
-    def __init__(self, *args: Any): ...
     def getK(self) -> int: ...
     def getInitMode(self) -> str: ...
     def getSrcCol(self) -> str: ...

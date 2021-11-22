@@ -1,171 +1,66 @@
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-
-from typing import Any, List, Optional, Type
-from pyspark.ml._typing import JM, M, P, T, ParamMap
+# Stubs for pyspark.ml.classification (Python 3)
 
 import abc
-from abc import abstractmethod
-from pyspark.ml import Estimator, Model, PredictionModel, Predictor, Transformer
-from pyspark.ml.base import _PredictorParams
-from pyspark.ml.param.shared import (
-    HasAggregationDepth,
-    HasBlockSize,
-    HasMaxBlockSizeInMB,
-    HasElasticNetParam,
-    HasFitIntercept,
-    HasMaxIter,
-    HasParallelism,
-    HasProbabilityCol,
-    HasRawPredictionCol,
-    HasRegParam,
-    HasSeed,
-    HasSolver,
-    HasStandardization,
-    HasStepSize,
-    HasThreshold,
-    HasThresholds,
-    HasTol,
-    HasWeightCol,
-)
-from pyspark.ml.regression import _FactorizationMachinesParams
+from typing import Any, Dict, List, Optional, TypeVar
+from pyspark.ml._typing import JM, M, P, T, ParamMap
+
+from pyspark.ml.base import Estimator, Model, Transformer
+from pyspark.ml.linalg import Matrix, Vector
+from pyspark.ml.param.shared import *
 from pyspark.ml.tree import (
     _DecisionTreeModel,
     _DecisionTreeParams,
+    _TreeEnsembleModel,
+    _RandomForestParams,
     _GBTParams,
     _HasVarianceImpurity,
-    _RandomForestParams,
     _TreeClassifierParams,
-    _TreeEnsembleModel,
+    _TreeEnsembleParams,
 )
-from pyspark.ml.util import HasTrainingSummary, JavaMLReadable, JavaMLWritable, \
-    MLReader, MLReadable, MLWriter, MLWritable
-from pyspark.ml.wrapper import JavaPredictionModel, JavaPredictor, JavaWrapper
-
-from pyspark.ml.linalg import Matrix, Vector
-from pyspark.ml.param import Param
-from pyspark.ml.regression import DecisionTreeRegressionModel
+from pyspark.ml.regression import (
+    _FactorizationMachinesParams,
+    DecisionTreeRegressionModel,
+)
+from pyspark.ml.util import *
+from pyspark.ml.wrapper import (
+    JavaPredictionModel,
+    JavaPredictor,
+    _JavaPredictorParams,
+    JavaWrapper,
+    JavaTransformer,
+)
 from pyspark.sql.dataframe import DataFrame
 
-class _ClassifierParams(HasRawPredictionCol, _PredictorParams): ...
+class _JavaClassifierParams(HasRawPredictionCol, _JavaPredictorParams): ...
 
-class Classifier(Predictor, _ClassifierParams, metaclass=abc.ABCMeta):
+class JavaClassifier(JavaPredictor[JM], _JavaClassifierParams, metaclass=abc.ABCMeta):
     def setRawPredictionCol(self: P, value: str) -> P: ...
 
-class ClassificationModel(PredictionModel, _ClassifierParams, metaclass=abc.ABCMeta):
+class JavaClassificationModel(JavaPredictionModel[T], _JavaClassifierParams):
     def setRawPredictionCol(self: P, value: str) -> P: ...
     @property
-    @abc.abstractmethod
     def numClasses(self) -> int: ...
-    @abstractmethod
     def predictRaw(self, value: Vector) -> Vector: ...
 
-class _ProbabilisticClassifierParams(
-    HasProbabilityCol, HasThresholds, _ClassifierParams
+class _JavaProbabilisticClassifierParams(
+    HasProbabilityCol, HasThresholds, _JavaClassifierParams
 ): ...
 
-class ProbabilisticClassifier(
-    Classifier, _ProbabilisticClassifierParams, metaclass=abc.ABCMeta
+class JavaProbabilisticClassifier(
+    JavaClassifier[JM], _JavaProbabilisticClassifierParams, metaclass=abc.ABCMeta
 ):
     def setProbabilityCol(self: P, value: str) -> P: ...
     def setThresholds(self: P, value: List[float]) -> P: ...
 
-class ProbabilisticClassificationModel(
-    ClassificationModel, _ProbabilisticClassifierParams, metaclass=abc.ABCMeta
+class JavaProbabilisticClassificationModel(
+    JavaClassificationModel[T], _JavaProbabilisticClassifierParams
 ):
-    def setProbabilityCol(self: M, value: str) -> M: ...
-    def setThresholds(self: M, value: List[float]) -> M: ...
-    @abstractmethod
+    def setProbabilityCol(self: P, value: str) -> P: ...
+    def setThresholds(self, value: List[float]) -> P: ...
     def predictProbability(self, value: Vector) -> Vector: ...
-
-class _JavaClassifier(Classifier, JavaPredictor[JM], metaclass=abc.ABCMeta):
-    def setRawPredictionCol(self: P, value: str) -> P: ...
-
-class _JavaClassificationModel(ClassificationModel, JavaPredictionModel[T]):
-    @property
-    def numClasses(self) -> int: ...
-    def predictRaw(self, value: Vector) -> Vector: ...
-
-class _JavaProbabilisticClassifier(
-    ProbabilisticClassifier, _JavaClassifier[JM], metaclass=abc.ABCMeta
-): ...
-
-class _JavaProbabilisticClassificationModel(
-    ProbabilisticClassificationModel, _JavaClassificationModel[T]
-):
-    def predictProbability(self, value: Vector) -> Vector: ...
-
-class _ClassificationSummary(JavaWrapper):
-    @property
-    def predictions(self) -> DataFrame: ...
-    @property
-    def predictionCol(self) -> str: ...
-    @property
-    def labelCol(self) -> str: ...
-    @property
-    def weightCol(self) -> str: ...
-    @property
-    def labels(self) -> List[str]: ...
-    @property
-    def truePositiveRateByLabel(self) -> List[float]: ...
-    @property
-    def falsePositiveRateByLabel(self) -> List[float]: ...
-    @property
-    def precisionByLabel(self) -> List[float]: ...
-    @property
-    def recallByLabel(self) -> List[float]: ...
-    def fMeasureByLabel(self, beta: float = ...) -> List[float]: ...
-    @property
-    def accuracy(self) -> float: ...
-    @property
-    def weightedTruePositiveRate(self) -> float: ...
-    @property
-    def weightedFalsePositiveRate(self) -> float: ...
-    @property
-    def weightedRecall(self) -> float: ...
-    @property
-    def weightedPrecision(self) -> float: ...
-    def weightedFMeasure(self, beta: float = ...) -> float: ...
-
-class _TrainingSummary(JavaWrapper):
-    @property
-    def objectiveHistory(self) -> List[float]: ...
-    @property
-    def totalIterations(self) -> int: ...
-
-class _BinaryClassificationSummary(_ClassificationSummary):
-    @property
-    def scoreCol(self) -> str: ...
-    @property
-    def roc(self) -> DataFrame: ...
-    @property
-    def areaUnderROC(self) -> float: ...
-    @property
-    def pr(self) -> DataFrame: ...
-    @property
-    def fMeasureByThreshold(self) -> DataFrame: ...
-    @property
-    def precisionByThreshold(self) -> DataFrame: ...
-    @property
-    def recallByThreshold(self) -> DataFrame: ...
 
 class _LinearSVCParams(
-    _ClassifierParams,
+    _JavaClassifierParams,
     HasRegParam,
     HasMaxIter,
     HasFitIntercept,
@@ -174,13 +69,11 @@ class _LinearSVCParams(
     HasWeightCol,
     HasAggregationDepth,
     HasThreshold,
-    HasMaxBlockSizeInMB,
 ):
     threshold: Param[float]
-    def __init__(self, *args: Any) -> None: ...
 
 class LinearSVC(
-    _JavaClassifier[LinearSVCModel],
+    JavaClassifier[LinearSVCModel],
     _LinearSVCParams,
     JavaMLWritable,
     JavaMLReadable[LinearSVC],
@@ -199,8 +92,7 @@ class LinearSVC(
         standardization: bool = ...,
         threshold: float = ...,
         weightCol: Optional[str] = ...,
-        aggregationDepth: int = ...,
-        maxBlockSizeInMB: float = ...
+        aggregationDepth: int = ...
     ) -> None: ...
     def setParams(
         self,
@@ -216,8 +108,7 @@ class LinearSVC(
         standardization: bool = ...,
         threshold: float = ...,
         weightCol: Optional[str] = ...,
-        aggregationDepth: int = ...,
-        maxBlockSizeInMB: float = ...
+        aggregationDepth: int = ...
     ) -> LinearSVC: ...
     def setMaxIter(self, value: int) -> LinearSVC: ...
     def setRegParam(self, value: float) -> LinearSVC: ...
@@ -227,28 +118,21 @@ class LinearSVC(
     def setThreshold(self, value: float) -> LinearSVC: ...
     def setWeightCol(self, value: str) -> LinearSVC: ...
     def setAggregationDepth(self, value: int) -> LinearSVC: ...
-    def setMaxBlockSizeInMB(self, value: float) -> LinearSVC: ...
 
 class LinearSVCModel(
-    _JavaClassificationModel[Vector],
+    JavaClassificationModel[Vector],
     _LinearSVCParams,
     JavaMLWritable,
     JavaMLReadable[LinearSVCModel],
-    HasTrainingSummary[LinearSVCTrainingSummary],
 ):
     def setThreshold(self, value: float) -> LinearSVCModel: ...
     @property
     def coefficients(self) -> Vector: ...
     @property
     def intercept(self) -> float: ...
-    def summary(self) -> LinearSVCTrainingSummary: ...
-    def evaluate(self, dataset: DataFrame) -> LinearSVCSummary: ...
-
-class LinearSVCSummary(_BinaryClassificationSummary): ...
-class LinearSVCTrainingSummary(LinearSVCSummary, _TrainingSummary): ...
 
 class _LogisticRegressionParams(
-    _ProbabilisticClassifierParams,
+    _JavaProbabilisticClassifierParams,
     HasRegParam,
     HasElasticNetParam,
     HasMaxIter,
@@ -258,7 +142,6 @@ class _LogisticRegressionParams(
     HasWeightCol,
     HasAggregationDepth,
     HasThreshold,
-    HasMaxBlockSizeInMB,
 ):
     threshold: Param[float]
     family: Param[str]
@@ -266,7 +149,6 @@ class _LogisticRegressionParams(
     upperBoundsOnCoefficients: Param[Matrix]
     lowerBoundsOnIntercepts: Param[Vector]
     upperBoundsOnIntercepts: Param[Vector]
-    def __init__(self, *args: Any): ...
     def setThreshold(self: P, value: float) -> P: ...
     def getThreshold(self) -> float: ...
     def setThresholds(self: P, value: List[float]) -> P: ...
@@ -278,7 +160,7 @@ class _LogisticRegressionParams(
     def getUpperBoundsOnIntercepts(self) -> Vector: ...
 
 class LogisticRegression(
-    _JavaProbabilisticClassifier[LogisticRegressionModel],
+    JavaProbabilisticClassifier[LogisticRegressionModel],
     _LogisticRegressionParams,
     JavaMLWritable,
     JavaMLReadable[LogisticRegression],
@@ -305,8 +187,7 @@ class LogisticRegression(
         lowerBoundsOnCoefficients: Optional[Matrix] = ...,
         upperBoundsOnCoefficients: Optional[Matrix] = ...,
         lowerBoundsOnIntercepts: Optional[Vector] = ...,
-        upperBoundsOnIntercepts: Optional[Vector] = ...,
-        maxBlockSizeInMB: float = ...
+        upperBoundsOnIntercepts: Optional[Vector] = ...
     ) -> None: ...
     def setParams(
         self,
@@ -330,8 +211,7 @@ class LogisticRegression(
         lowerBoundsOnCoefficients: Optional[Matrix] = ...,
         upperBoundsOnCoefficients: Optional[Matrix] = ...,
         lowerBoundsOnIntercepts: Optional[Vector] = ...,
-        upperBoundsOnIntercepts: Optional[Vector] = ...,
-        maxBlockSizeInMB: float = ...
+        upperBoundsOnIntercepts: Optional[Vector] = ...
     ) -> LogisticRegression: ...
     def setFamily(self, value: str) -> LogisticRegression: ...
     def setLowerBoundsOnCoefficients(self, value: Matrix) -> LogisticRegression: ...
@@ -346,10 +226,9 @@ class LogisticRegression(
     def setStandardization(self, value: bool) -> LogisticRegression: ...
     def setWeightCol(self, value: str) -> LogisticRegression: ...
     def setAggregationDepth(self, value: int) -> LogisticRegression: ...
-    def setMaxBlockSizeInMB(self, value: float) -> LogisticRegression: ...
 
 class LogisticRegressionModel(
-    _JavaProbabilisticClassificationModel[Vector],
+    JavaProbabilisticClassificationModel[Vector],
     _LogisticRegressionParams,
     JavaMLWritable,
     JavaMLReadable[LogisticRegressionModel],
@@ -367,27 +246,67 @@ class LogisticRegressionModel(
     def summary(self) -> LogisticRegressionTrainingSummary: ...
     def evaluate(self, dataset: DataFrame) -> LogisticRegressionSummary: ...
 
-class LogisticRegressionSummary(_ClassificationSummary):
+class LogisticRegressionSummary(JavaWrapper):
+    @property
+    def predictions(self) -> DataFrame: ...
     @property
     def probabilityCol(self) -> str: ...
     @property
+    def predictionCol(self) -> str: ...
+    @property
+    def labelCol(self) -> str: ...
+    @property
     def featuresCol(self) -> str: ...
+    @property
+    def labels(self) -> List[float]: ...
+    @property
+    def truePositiveRateByLabel(self) -> List[float]: ...
+    @property
+    def falsePositiveRateByLabel(self) -> List[float]: ...
+    @property
+    def precisionByLabel(self) -> List[float]: ...
+    @property
+    def recallByLabel(self) -> List[float]: ...
+    def fMeasureByLabel(self, beta: float = ...) -> List[float]: ...
+    @property
+    def accuracy(self) -> float: ...
+    @property
+    def weightedTruePositiveRate(self) -> float: ...
+    @property
+    def weightedFalsePositiveRate(self) -> float: ...
+    @property
+    def weightedRecall(self) -> float: ...
+    @property
+    def weightedPrecision(self) -> float: ...
+    def weightedFMeasure(self, beta: float = ...) -> float: ...
 
-class LogisticRegressionTrainingSummary(
-    LogisticRegressionSummary, _TrainingSummary
-): ...
-class BinaryLogisticRegressionSummary(
-    _BinaryClassificationSummary, LogisticRegressionSummary
-): ...
+class LogisticRegressionTrainingSummary(LogisticRegressionSummary):
+    @property
+    def objectiveHistory(self) -> List[float]: ...
+    @property
+    def totalIterations(self) -> int: ...
+
+class BinaryLogisticRegressionSummary(LogisticRegressionSummary):
+    @property
+    def roc(self) -> DataFrame: ...
+    @property
+    def areaUnderROC(self) -> float: ...
+    @property
+    def pr(self) -> DataFrame: ...
+    @property
+    def fMeasureByThreshold(self) -> DataFrame: ...
+    @property
+    def precisionByThreshold(self) -> DataFrame: ...
+    @property
+    def recallByThreshold(self) -> DataFrame: ...
+
 class BinaryLogisticRegressionTrainingSummary(
     BinaryLogisticRegressionSummary, LogisticRegressionTrainingSummary
 ): ...
-
-class _DecisionTreeClassifierParams(_DecisionTreeParams, _TreeClassifierParams):
-    def __init__(self, *args: Any): ...
+class _DecisionTreeClassifierParams(_DecisionTreeParams, _TreeClassifierParams): ...
 
 class DecisionTreeClassifier(
-    _JavaProbabilisticClassifier[DecisionTreeClassificationModel],
+    JavaProbabilisticClassifier[DecisionTreeClassificationModel],
     _DecisionTreeClassifierParams,
     JavaMLWritable,
     JavaMLReadable[DecisionTreeClassifier],
@@ -448,7 +367,7 @@ class DecisionTreeClassifier(
 
 class DecisionTreeClassificationModel(
     _DecisionTreeModel,
-    _JavaProbabilisticClassificationModel[Vector],
+    JavaProbabilisticClassificationModel[Vector],
     _DecisionTreeClassifierParams,
     JavaMLWritable,
     JavaMLReadable[DecisionTreeClassificationModel],
@@ -456,11 +375,10 @@ class DecisionTreeClassificationModel(
     @property
     def featureImportances(self) -> Vector: ...
 
-class _RandomForestClassifierParams(_RandomForestParams, _TreeClassifierParams):
-    def __init__(self, *args: Any): ...
+class _RandomForestClassifierParams(_RandomForestParams, _TreeClassifierParams): ...
 
 class RandomForestClassifier(
-    _JavaProbabilisticClassifier[RandomForestClassificationModel],
+    JavaProbabilisticClassifier[RandomForestClassificationModel],
     _RandomForestClassifierParams,
     JavaMLWritable,
     JavaMLReadable[RandomForestClassifier],
@@ -533,36 +451,23 @@ class RandomForestClassifier(
 
 class RandomForestClassificationModel(
     _TreeEnsembleModel,
-    _JavaProbabilisticClassificationModel[Vector],
+    JavaProbabilisticClassificationModel[Vector],
     _RandomForestClassifierParams,
     JavaMLWritable,
     JavaMLReadable[RandomForestClassificationModel],
-    HasTrainingSummary[RandomForestClassificationTrainingSummary],
 ):
     @property
     def featureImportances(self) -> Vector: ...
     @property
     def trees(self) -> List[DecisionTreeClassificationModel]: ...
-    def summary(self) -> RandomForestClassificationTrainingSummary: ...
-    def evaluate(self, dataset: DataFrame) -> RandomForestClassificationSummary: ...
-
-class RandomForestClassificationSummary(_ClassificationSummary): ...
-class RandomForestClassificationTrainingSummary(
-    RandomForestClassificationSummary, _TrainingSummary
-): ...
-class BinaryRandomForestClassificationSummary(_BinaryClassificationSummary): ...
-class BinaryRandomForestClassificationTrainingSummary(
-    BinaryRandomForestClassificationSummary, RandomForestClassificationTrainingSummary
-): ...
 
 class _GBTClassifierParams(_GBTParams, _HasVarianceImpurity):
     supportedLossTypes: List[str]
     lossType: Param[str]
-    def __init__(self, *args: Any): ...
     def getLossType(self) -> str: ...
 
 class GBTClassifier(
-    _JavaProbabilisticClassifier[GBTClassificationModel],
+    JavaProbabilisticClassifier[GBTClassificationModel],
     _GBTClassifierParams,
     JavaMLWritable,
     JavaMLReadable[GBTClassifier],
@@ -637,7 +542,7 @@ class GBTClassifier(
 
 class GBTClassificationModel(
     _TreeEnsembleModel,
-    _JavaProbabilisticClassificationModel[Vector],
+    JavaProbabilisticClassificationModel[Vector],
     _GBTClassifierParams,
     JavaMLWritable,
     JavaMLReadable[GBTClassificationModel],
@@ -648,15 +553,14 @@ class GBTClassificationModel(
     def trees(self) -> List[DecisionTreeRegressionModel]: ...
     def evaluateEachIteration(self, dataset: DataFrame) -> List[float]: ...
 
-class _NaiveBayesParams(_PredictorParams, HasWeightCol):
+class _NaiveBayesParams(_JavaPredictorParams, HasWeightCol):
     smoothing: Param[float]
     modelType: Param[str]
-    def __init__(self, *args: Any): ...
     def getSmoothing(self) -> float: ...
     def getModelType(self) -> str: ...
 
 class NaiveBayes(
-    _JavaProbabilisticClassifier[NaiveBayesModel],
+    JavaProbabilisticClassifier[NaiveBayesModel],
     _NaiveBayesParams,
     HasThresholds,
     HasWeightCol,
@@ -694,7 +598,7 @@ class NaiveBayes(
     def setWeightCol(self, value: str) -> NaiveBayes: ...
 
 class NaiveBayesModel(
-    _JavaProbabilisticClassificationModel[Vector],
+    JavaProbabilisticClassificationModel[Vector],
     _NaiveBayesParams,
     JavaMLWritable,
     JavaMLReadable[NaiveBayesModel],
@@ -707,7 +611,7 @@ class NaiveBayesModel(
     def sigma(self) -> Matrix: ...
 
 class _MultilayerPerceptronParams(
-    _ProbabilisticClassifierParams,
+    _JavaProbabilisticClassifierParams,
     HasSeed,
     HasMaxIter,
     HasTol,
@@ -718,12 +622,11 @@ class _MultilayerPerceptronParams(
     layers: Param[List[int]]
     solver: Param[str]
     initialWeights: Param[Vector]
-    def __init__(self, *args: Any): ...
     def getLayers(self) -> List[int]: ...
     def getInitialWeights(self) -> Vector: ...
 
 class MultilayerPerceptronClassifier(
-    _JavaProbabilisticClassifier[MultilayerPerceptronClassificationModel],
+    JavaProbabilisticClassifier[MultilayerPerceptronClassificationModel],
     _MultilayerPerceptronParams,
     JavaMLWritable,
     JavaMLReadable[MultilayerPerceptronClassifier],
@@ -772,25 +675,15 @@ class MultilayerPerceptronClassifier(
     def setSolver(self, value: str) -> MultilayerPerceptronClassifier: ...
 
 class MultilayerPerceptronClassificationModel(
-    _JavaProbabilisticClassificationModel[Vector],
+    JavaProbabilisticClassificationModel[Vector],
     _MultilayerPerceptronParams,
     JavaMLWritable,
     JavaMLReadable[MultilayerPerceptronClassificationModel],
-    HasTrainingSummary[MultilayerPerceptronClassificationTrainingSummary],
 ):
     @property
     def weights(self) -> Vector: ...
-    def summary(self) -> MultilayerPerceptronClassificationTrainingSummary: ...
-    def evaluate(
-        self, dataset: DataFrame
-    ) -> MultilayerPerceptronClassificationSummary: ...
 
-class MultilayerPerceptronClassificationSummary(_ClassificationSummary): ...
-class MultilayerPerceptronClassificationTrainingSummary(
-    MultilayerPerceptronClassificationSummary, _TrainingSummary
-): ...
-
-class _OneVsRestParams(_ClassifierParams, HasWeightCol):
+class _OneVsRestParams(_JavaClassifierParams, HasWeightCol):
     classifier: Param[Estimator]
     def getClassifier(self) -> Estimator[M]: ...
 
@@ -798,8 +691,8 @@ class OneVsRest(
     Estimator[OneVsRestModel],
     _OneVsRestParams,
     HasParallelism,
-    MLReadable[OneVsRest],
-    MLWritable,
+    JavaMLReadable[OneVsRest],
+    JavaMLWritable,
 ):
     def __init__(
         self,
@@ -833,7 +726,7 @@ class OneVsRest(
     def copy(self, extra: Optional[ParamMap] = ...) -> OneVsRest: ...
 
 class OneVsRestModel(
-    Model, _OneVsRestParams, MLReadable[OneVsRestModel], MLWritable
+    Model, _OneVsRestParams, JavaMLReadable[OneVsRestModel], JavaMLWritable
 ):
     models: List[Transformer]
     def __init__(self, models: List[Transformer]) -> None: ...
@@ -842,28 +735,8 @@ class OneVsRestModel(
     def setRawPredictionCol(self, value: str) -> OneVsRestModel: ...
     def copy(self, extra: Optional[ParamMap] = ...) -> OneVsRestModel: ...
 
-class OneVsRestWriter(MLWriter):
-    instance: OneVsRest
-    def __init__(self, instance: OneVsRest) -> None: ...
-    def saveImpl(self, path: str) -> None: ...
-
-class OneVsRestReader(MLReader[OneVsRest]):
-    cls: Type[OneVsRest]
-    def __init__(self, cls: Type[OneVsRest]) -> None: ...
-    def load(self, path: str) -> OneVsRest: ...
-
-class OneVsRestModelWriter(MLWriter):
-    instance: OneVsRestModel
-    def __init__(self, instance: OneVsRestModel) -> None: ...
-    def saveImpl(self, path: str) -> None: ...
-
-class OneVsRestModelReader(MLReader[OneVsRestModel]):
-    cls: Type[OneVsRestModel]
-    def __init__(self, cls: Type[OneVsRestModel]) -> None: ...
-    def load(self, path: str) -> OneVsRestModel: ...
-
 class FMClassifier(
-    _JavaProbabilisticClassifier[FMClassificationModel],
+    JavaProbabilisticClassifier[FMClassificationModel],
     _FactorizationMachinesParams,
     JavaMLWritable,
     JavaMLReadable[FMClassifier],
@@ -912,7 +785,7 @@ class FMClassifier(
         solver: str = ...,
         thresholds: Optional[Any] = ...,
         seed: Optional[Any] = ...,
-    ) -> FMClassifier: ...
+    ): ...
     def setFactorSize(self, value: int) -> FMClassifier: ...
     def setFitLinear(self, value: bool) -> FMClassifier: ...
     def setMiniBatchFraction(self, value: float) -> FMClassifier: ...
@@ -926,7 +799,7 @@ class FMClassifier(
     def setRegParam(self, value: float) -> FMClassifier: ...
 
 class FMClassificationModel(
-    _JavaProbabilisticClassificationModel[Vector],
+    JavaProbabilisticClassificationModel,
     _FactorizationMachinesParams,
     JavaMLWritable,
     JavaMLReadable[FMClassificationModel],
@@ -937,8 +810,3 @@ class FMClassificationModel(
     def linear(self) -> Vector: ...
     @property
     def factors(self) -> Matrix: ...
-    def summary(self) -> FMClassificationTrainingSummary: ...
-    def evaluate(self, dataset: DataFrame) -> FMClassificationSummary: ...
-
-class FMClassificationSummary(_BinaryClassificationSummary): ...
-class FMClassificationTrainingSummary(FMClassificationSummary, _TrainingSummary): ...

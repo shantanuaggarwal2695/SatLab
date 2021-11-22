@@ -1,30 +1,14 @@
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
+# Stubs for pyspark.ml.tuning (Python 3)
 
 from typing import overload
-from typing import Any, List, Optional, Tuple, Type
-from pyspark.ml._typing import ParamMap
+from typing import Any, Dict, List, Optional, Tuple, Type
+from pyspark.ml._typing import P, ParamMap
 
 from pyspark.ml import Estimator, Model
 from pyspark.ml.evaluation import Evaluator
 from pyspark.ml.param import Param
-from pyspark.ml.param.shared import HasCollectSubModels, HasParallelism, HasSeed
-from pyspark.ml.util import MLReader, MLReadable, MLWriter, MLWritable
+from pyspark.ml.param.shared import *
+from pyspark.ml.util import *
 
 class ParamGridBuilder:
     def __init__(self) -> None: ...
@@ -45,10 +29,7 @@ class _ValidatorParams(HasSeed):
 
 class _CrossValidatorParams(_ValidatorParams):
     numFolds: Param[int]
-    foldCol: Param[str]
-    def __init__(self, *args: Any): ...
     def getNumFolds(self) -> int: ...
-    def getFoldCol(self) -> str: ...
 
 class CrossValidator(
     Estimator[CrossValidatorModel],
@@ -67,8 +48,7 @@ class CrossValidator(
         numFolds: int = ...,
         seed: Optional[int] = ...,
         parallelism: int = ...,
-        collectSubModels: bool = ...,
-        foldCol: str = ...
+        collectSubModels: bool = ...
     ) -> None: ...
     def setParams(
         self,
@@ -79,14 +59,12 @@ class CrossValidator(
         numFolds: int = ...,
         seed: Optional[int] = ...,
         parallelism: int = ...,
-        collectSubModels: bool = ...,
-        foldCol: str = ...
+        collectSubModels: bool = ...
     ) -> CrossValidator: ...
     def setEstimator(self, value: Estimator) -> CrossValidator: ...
     def setEstimatorParamMaps(self, value: List[ParamMap]) -> CrossValidator: ...
     def setEvaluator(self, value: Evaluator) -> CrossValidator: ...
     def setNumFolds(self, value: int) -> CrossValidator: ...
-    def setFoldCol(self, value: str) -> CrossValidator: ...
     def setSeed(self, value: int) -> CrossValidator: ...
     def setParallelism(self, value: int) -> CrossValidator: ...
     def setCollectSubModels(self, value: bool) -> CrossValidator: ...
@@ -104,7 +82,7 @@ class CrossValidatorModel(
     def __init__(
         self,
         bestModel: Model,
-        avgMetrics: Optional[List[float]] = ...,
+        avgMetrics: List[float] = ...,
         subModels: Optional[List[List[Model]]] = ...,
     ) -> None: ...
     def copy(self, extra: Optional[ParamMap] = ...) -> CrossValidatorModel: ...
@@ -114,7 +92,6 @@ class CrossValidatorModel(
 
 class _TrainValidationSplitParams(_ValidatorParams):
     trainRatio: Param[float]
-    def __init__(self, *args: Any): ...
     def getTrainRatio(self) -> float: ...
 
 class TrainValidationSplit(
@@ -171,7 +148,7 @@ class TrainValidationSplitModel(
     def __init__(
         self,
         bestModel: Model,
-        validationMetrics: Optional[List[float]] = ...,
+        validationMetrics: List[float] = ...,
         subModels: Optional[List[Model]] = ...,
     ) -> None: ...
     def setEstimator(self, value: Estimator) -> TrainValidationSplitModel: ...
@@ -183,43 +160,3 @@ class TrainValidationSplitModel(
     def write(self) -> MLWriter: ...
     @classmethod
     def read(cls: Type[TrainValidationSplitModel]) -> MLReader: ...
-
-class CrossValidatorWriter(MLWriter):
-    instance: CrossValidator
-    def __init__(self, instance: CrossValidator) -> None: ...
-    def saveImpl(self, path: str) -> None: ...
-
-class CrossValidatorReader(MLReader[CrossValidator]):
-    cls: Type[CrossValidator]
-    def __init__(self, cls: Type[CrossValidator]) -> None: ...
-    def load(self, path: str) -> CrossValidator: ...
-
-class CrossValidatorModelWriter(MLWriter):
-    instance: CrossValidatorModel
-    def __init__(self, instance: CrossValidatorModel) -> None: ...
-    def saveImpl(self, path: str) -> None: ...
-
-class CrossValidatorModelReader(MLReader[CrossValidatorModel]):
-    cls: Type[CrossValidatorModel]
-    def __init__(self, cls: Type[CrossValidatorModel]) -> None: ...
-    def load(self, path: str) -> CrossValidatorModel: ...
-
-class TrainValidationSplitWriter(MLWriter):
-    instance: TrainValidationSplit
-    def __init__(self, instance: TrainValidationSplit) -> None: ...
-    def saveImpl(self, path: str) -> None: ...
-
-class TrainValidationSplitReader(MLReader[TrainValidationSplit]):
-    cls: Type[TrainValidationSplit]
-    def __init__(self, cls: Type[TrainValidationSplit]) -> None: ...
-    def load(self, path: str) -> TrainValidationSplit: ...
-
-class TrainValidationSplitModelWriter(MLWriter):
-    instance: TrainValidationSplitModel
-    def __init__(self, instance: TrainValidationSplitModel) -> None: ...
-    def saveImpl(self, path: str) -> None: ...
-
-class TrainValidationSplitModelReader(MLReader[TrainValidationSplitModel]):
-    cls: Type[TrainValidationSplitModel]
-    def __init__(self, cls: Type[TrainValidationSplitModel]) -> None: ...
-    def load(self, path: str) -> TrainValidationSplitModel: ...

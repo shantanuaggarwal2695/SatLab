@@ -1,23 +1,8 @@
+# Stubs for pyspark.mllib.clustering (Python 3.5)
 #
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
 
 from typing import overload
-from typing import List, NamedTuple, Optional, Tuple, TypeVar
+from typing import Any, List, NamedTuple, Optional, Tuple, TypeVar
 
 import array
 
@@ -35,7 +20,7 @@ from pyspark.streaming.dstream import DStream
 T = TypeVar("T")
 
 class BisectingKMeansModel(JavaModelWrapper):
-    centers: List[VectorLike]
+    centers: List[ndarray]
     def __init__(self, java_model: JavaObject) -> None: ...
     @property
     def clusterCenters(self) -> List[ndarray]: ...
@@ -62,8 +47,8 @@ class BisectingKMeans:
     ) -> BisectingKMeansModel: ...
 
 class KMeansModel(Saveable, Loader[KMeansModel]):
-    centers: List[VectorLike]
-    def __init__(self, centers: List[VectorLike]) -> None: ...
+    centers: List[ndarray]
+    def __init__(self, centers: List[ndarray]) -> None: ...
     @property
     def clusterCenters(self) -> List[ndarray]: ...
     @property
@@ -144,12 +129,10 @@ class PowerIterationClustering:
     class Assignment(NamedTuple("Assignment", [("id", int), ("cluster", int)])): ...
 
 class StreamingKMeansModel(KMeansModel):
-    def __init__(
-        self, clusterCenters: List[VectorLike], clusterWeights: VectorLike
-    ) -> None: ...
+    def __init__(self, clusterCenters, clusterWeights) -> None: ...
     @property
     def clusterWeights(self) -> List[float64]: ...
-    centers: List[VectorLike]
+    centers: ndarray
     def update(
         self, data: RDD[VectorLike], decayFactor: float, timeUnit: str
     ) -> StreamingKMeansModel: ...

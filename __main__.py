@@ -41,14 +41,20 @@ if __name__ == '__main__':
     spark = initiate_session()
     from spark_job.Loading.geotiff_loader import Loader
     from spark_job.OpenStreetMap.load_data import LoadOSM
+    from spark_job.Features.spatial import SpatialFunctions
 
     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
     train = loader.load_geotiff()
-    train.show(2)
+    # train.show(2)
 
     OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
     points, polygons = OSM.transform()
-    points.show(2)
-    polygons.show(2)
+    # points.show(2)
+    # polygons.show(2)
+
+    spatialfunctions = SpatialFunctions(points, polygons, train, spark)
+    geo_features = spatialfunctions.combine()
+    geo_features.show(2)
+
 
 

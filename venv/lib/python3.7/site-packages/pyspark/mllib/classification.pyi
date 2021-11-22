@@ -1,23 +1,5 @@
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-
 from typing import overload
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from pyspark.context import SparkContext
 from pyspark.rdd import RDD
@@ -90,7 +72,7 @@ class LogisticRegressionWithLBFGS:
 
 class SVMModel(LinearClassificationModel):
     def __init__(self, weights: Vector, intercept: float) -> None: ...
-    @overload  # type: ignore
+    @overload
     def predict(self, x: VectorLike) -> float64: ...
     @overload
     def predict(self, x: RDD[VectorLike]) -> RDD[float64]: ...
@@ -118,7 +100,7 @@ class NaiveBayesModel(Saveable, Loader[NaiveBayesModel]):
     labels: ndarray
     pi: ndarray
     theta: ndarray
-    def __init__(self, labels: ndarray, pi: ndarray, theta: ndarray) -> None: ...
+    def __init__(self, labels, pi, theta) -> None: ...
     @overload
     def predict(self, x: VectorLike) -> float64: ...
     @overload

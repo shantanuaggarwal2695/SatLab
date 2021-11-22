@@ -1,23 +1,8 @@
+# Stubs for pyspark.ml.evaluation (Python 3.5)
 #
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
 
 import abc
-from typing import Optional
+from typing import Any, Dict, Optional, Type
 from pyspark.ml._typing import (
     ParamMap,
     BinaryClassificationEvaluatorMetricType,
@@ -39,15 +24,14 @@ from pyspark.ml.param.shared import (
     HasWeightCol,
 )
 from pyspark.ml.util import JavaMLReadable, JavaMLWritable
-from pyspark.sql.dataframe import DataFrame
 
-class Evaluator(Params, metaclass=abc.ABCMeta):
-    def evaluate(
-        self, dataset: DataFrame, params: Optional[ParamMap] = ...
-    ) -> float: ...
+class Evaluator(Params):
+    __metaclass__: Type[abc.ABCMeta]
+    def evaluate(self, dataset, params: Optional[ParamMap] = ...) -> float: ...
     def isLargerBetter(self) -> bool: ...
 
-class JavaEvaluator(JavaParams, Evaluator, metaclass=abc.ABCMeta):
+class JavaEvaluator(JavaParams, Evaluator):
+    __metaclass__: Type[abc.ABCMeta]
     def isLargerBetter(self) -> bool: ...
 
 class BinaryClassificationEvaluator(
@@ -78,15 +62,16 @@ class BinaryClassificationEvaluator(
     def setLabelCol(self, value: str) -> BinaryClassificationEvaluator: ...
     def setRawPredictionCol(self, value: str) -> BinaryClassificationEvaluator: ...
     def setWeightCol(self, value: str) -> BinaryClassificationEvaluator: ...
-    def setParams(
-        self,
-        *,
-        rawPredictionCol: str = ...,
-        labelCol: str = ...,
-        metricName: BinaryClassificationEvaluatorMetricType = ...,
-        weightCol: Optional[str] = ...,
-        numBins: int = ...
-    ) -> BinaryClassificationEvaluator: ...
+
+def setParams(
+    self,
+    *,
+    rawPredictionCol: str = ...,
+    labelCol: str = ...,
+    metricName: BinaryClassificationEvaluatorMetricType = ...,
+    weightCol: Optional[str] = ...,
+    numBins: int = ...
+) -> BinaryClassificationEvaluator: ...
 
 class RegressionEvaluator(
     JavaEvaluator,
@@ -216,7 +201,6 @@ class ClusteringEvaluator(
     JavaEvaluator,
     HasPredictionCol,
     HasFeaturesCol,
-    HasWeightCol,
     JavaMLReadable[ClusteringEvaluator],
     JavaMLWritable,
 ):
@@ -228,8 +212,7 @@ class ClusteringEvaluator(
         predictionCol: str = ...,
         featuresCol: str = ...,
         metricName: ClusteringEvaluatorMetricType = ...,
-        distanceMeasure: str = ...,
-        weightCol: Optional[str] = ...
+        distanceMeasure: str = ...
     ) -> None: ...
     def setParams(
         self,
@@ -237,8 +220,7 @@ class ClusteringEvaluator(
         predictionCol: str = ...,
         featuresCol: str = ...,
         metricName: ClusteringEvaluatorMetricType = ...,
-        distanceMeasure: str = ...,
-        weightCol: Optional[str] = ...
+        distanceMeasure: str = ...
     ) -> ClusteringEvaluator: ...
     def setMetricName(
         self, value: ClusteringEvaluatorMetricType
@@ -248,7 +230,6 @@ class ClusteringEvaluator(
     def getDistanceMeasure(self) -> str: ...
     def setFeaturesCol(self, value: str) -> ClusteringEvaluator: ...
     def setPredictionCol(self, value: str) -> ClusteringEvaluator: ...
-    def setWeightCol(self, value: str) -> ClusteringEvaluator: ...
 
 class RankingEvaluator(
     JavaEvaluator,
