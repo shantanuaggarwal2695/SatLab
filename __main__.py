@@ -42,6 +42,7 @@ if __name__ == '__main__':
     from spark_job.Loading.geotiff_loader import Loader
     from spark_job.OpenStreetMap.load_data import LoadOSM
     from spark_job.Features.spatial import SpatialFunctions
+    from spark_job.Features.textural import Textural
 
     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
     train = loader.load_geotiff()
@@ -54,7 +55,10 @@ if __name__ == '__main__':
 
     spatialfunctions = SpatialFunctions(points, polygons, train, spark)
     geo_features = spatialfunctions.combine()
-    geo_features.show(2)
+    # geo_features.show(2)
 
+    texturalfunctions = Textural(train, spark)
+    glcm_df = texturalfunctions.extract_features()
+    glcm_df.show(2)
 
 
