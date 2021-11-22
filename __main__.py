@@ -7,7 +7,6 @@ from sedona.utils import KryoSerializer, SedonaKryoRegistrator
 def initiate_session():
     spark = SparkSession. \
         builder. \
-        master("spark://EN4119507L.cidse.dhcp.asu.edu:7077"). \
         appName("geo_labeling_functions"). \
         config("spark.serializer", KryoSerializer.getName). \
         config("spark.kryo.registrator", SedonaKryoRegistrator.getName). \
@@ -51,3 +50,5 @@ if __name__ == '__main__':
     points, polygons = OSM.transform()
     points.show(2)
     polygons.show(2)
+
+

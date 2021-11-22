@@ -19,32 +19,6 @@ class LoadOSM:
         #                                                                    "col as attribute")
         return nodes
 
-    # @staticmethod
-    # def getlen(self, col):
-    #     return len(col)
-    #
-    # @staticmethod
-    # def constructGeometry(self, col):
-    #     temp = []
-    #     col = sorted(col, key=lambda x: int(x[0]))
-    #     first_geom = col[0][1]
-    #     for arr in col:
-    #         temp.append(arr[1])
-    #     temp.append(first_geom)
-    #     return ",".join(temp)
-    #
-    # @staticmethod
-    # def getString(hexa):
-    #     return hexa.decode()
-    #
-    # def registerUDF(self):
-    #     length = udf(self.getlen, IntegerType())
-    #     self.spark.udf.register("ColLen", length)
-    #     geom = udf(self.constructGeometry, StringType())
-    #     self.spark.udf.register("GetGeom", geom)
-    #     convert = udf(self.getString, StringType())
-    #     self.spark.udf.register("RS_Convert", convert)
-
 
     def getWays(self):
         ways = self.spark.read.parquet(self.path + "argentina-latest.osm.pbf.way.parquet")
