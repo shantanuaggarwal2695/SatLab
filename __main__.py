@@ -48,13 +48,13 @@ if __name__ == '__main__':
     train = loader.load_geotiff()
     # train.show(2)
 
-    OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
-    points, polygons = OSM.transform()
-    # points.show(2)
-    # polygons.show(2)
-
-    spatialfunctions = SpatialFunctions(points, polygons, train, spark)
-    geo_features = spatialfunctions.combine()
+    # OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
+    # points, polygons = OSM.transform()
+    # # points.show(2)
+    # # polygons.show(2)
+    #
+    # spatialfunctions = SpatialFunctions(points, polygons, train, spark)
+    # geo_features = spatialfunctions.combine()
     # geo_features.show(2)
 
     texturalfunctions = Textural(train, spark)

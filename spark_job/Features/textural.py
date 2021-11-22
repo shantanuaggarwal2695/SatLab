@@ -8,10 +8,10 @@ from skimage.feature import greycoprops as gc
 class Textural:
     def __init__(self, train,spark):
         self.train = train
-        self.final_train = self.train.selectExpr("image.origin as origin", "ST_GeomFromWkt(image.wkt) as Geom",
-                                            "image.height as height", "image.width as width", "image.data as data",
-                                            "image.nBands as bands")
-        self.final_train = self.final_train.selectExpr("origin", "Geom", "RS_Normalize(RS_GetBand(data, 1,bands)) as Band1",
+        # self.final_train = self.train.selectExpr("image.origin as origin", "ST_GeomFromWkt(image.wkt) as Geom",
+        #                                     "image.height as height", "image.width as width", "image.data as data",
+        #                                     "image.nBands as bands")
+        self.final_train = self.train.selectExpr("origin", "Geom", "RS_Normalize(RS_GetBand(data, 1,bands)) as Band1",
                                              "RS_Normalize(RS_GetBand(data, 2,bands)) as Band2",
                                              "RS_Normalize(RS_GetBand(data, 3,bands)) as Band3",
                                              "RS_Normalize(RS_GetBand(data, 4,bands)) as Band4")
