@@ -1,5 +1,4 @@
 from math import log2
-from snorkel.types import DataPoint
 from pyspark.ml.feature import VectorAssembler
 import numpy as np
 
@@ -47,17 +46,19 @@ class SemiLabeling:
         return theta_distribution
 
     def generate_labels(self):
+        def apply_lfs(x):
+            labels = []
+            for j, lf in enumerate(self.lfs):
+                y = lf(x[0], self.theta[j])
+                if y >= 0:
+                    labels.append((x[1], j, y))
+            return labels
 
-        labels = self.rdd.zipWithIndex().map(lambda x:self.apply_lfs(x)).collect()
-        return labels
+        labels = self.rdd.zipWithIndex().map(apply_lfs).collect()
+        print(labels)
 
-    def apply_lfs(self, x):
-        labels = []
-        for j, lf in enumerate(self.lfs):
-            y = lf(x[0], self.theta[j])
-            if y >= 0:
-                labels.append((x[1], j, y))
-        return labels
+
+
 
     def getClustering(self):
         features = (
