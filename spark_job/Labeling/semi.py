@@ -42,10 +42,11 @@ class SemiLabeling:
                     kl_min = kl_divergent
                     mle_theta = theta
             theta_distribution.append(mle_theta)
-        self.theta = theta_distribution
         return theta_distribution
 
     def generate_labels(self):
+        self.theta = self.generate_threshold()
+
         def apply_lfs(x):
             labels = []
             for j, lf in enumerate(self.lfs):
