@@ -14,7 +14,6 @@ class SemiLabeling:
             "select geo.origin, geo.Geom, geo.healthcare, geo.malls, geo.schools, geo.waste, geo.road, geo.forest, geo.residential, geo.power, geo.resort, geo.grasslands,text.glcm_contrast_Scaled, text.glcm_dissimilarity_Scaled, text.glcm_homogeneity_Scaled, text.glcm_energy_Scaled, text.glcm_correlation_Scaled, text.glcm_ASM_Scaled from text, geo where text.origin = geo.origin")
         self.rdd = self.combined_df.rdd
         self.data_count = self.combined_df.count()
-        self.lfs = self.getweaklabels()
         self.theta = None
 
     def generate_threshold(self):
@@ -46,7 +45,7 @@ class SemiLabeling:
 
     def generate_labels(self):
         theta = self.generate_threshold()
-        lfs = self.lfs
+        lfs = self.getweaklabels()
 
         def apply_lfs(x):
             labels = []
@@ -57,8 +56,24 @@ class SemiLabeling:
             return labels
 
         labels = self.rdd.zipWithIndex().map(apply_lfs).collect()
-        print(labels)
-        # print(self.rdd.zipWithIndex().map(lambda x:x[0]).collect())
+        label_matrix = self.create_numpy_from_labels(labels)
+        return label_matrix
+
+    def create_numpy_from_labels(self, data):
+        num_rows = len(data)
+        num_cols = len(self.getweaklabels())
+
+        label_matrix = np.zeros((num_rows, num_cols))
+
+        for data_result in data:
+            for local_label in data_result:
+                local_row = local_label[0]
+                local_col = local_label[1]
+                label = local_label[2]
+
+            label_matrix[local_row][local_col] = label
+
+        return label_matrix
 
     def getClustering(self):
         features = (
