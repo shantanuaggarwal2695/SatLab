@@ -15,7 +15,7 @@ class SemiLabeling:
             "select geo.origin, geo.Geom, geo.healthcare, geo.malls, geo.schools, geo.waste, geo.road, geo.forest, geo.residential, geo.power, geo.resort, geo.grasslands,text.glcm_contrast_Scaled, text.glcm_dissimilarity_Scaled, text.glcm_homogeneity_Scaled, text.glcm_energy_Scaled, text.glcm_correlation_Scaled, text.glcm_ASM_Scaled from text, geo where text.origin = geo.origin")
 
     def generate_threshold(self):
-        clustering_prediction = self.getClustering()
+        clustering_prediction = self.getClustering().select("prediction").rdd.map(lambda x:x.prediction).collect()
         labeling_functions = self.getweaklabels()
         theta_distribution = []
 
