@@ -41,7 +41,7 @@ class SemiLabeling:
                     mle_theta = theta
             theta_distribution.append(mle_theta)
 
-            return theta_distribution
+        return theta_distribution
 
 
 
