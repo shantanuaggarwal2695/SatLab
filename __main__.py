@@ -59,14 +59,14 @@ if __name__ == '__main__':
     texturalfunctions = Textural(train, spark)
     glcm_df = texturalfunctions.extract_features()
 
-    ManualLabeling = Manual(geo_features, glcm_df, spark)
-    labels = ManualLabeling.produce_labels()
-    print(type(labels))
-    print(labels)
+    # ManualLabeling = Manual(geo_features, glcm_df, spark)
+    # labels = ManualLabeling.produce_labels()
+    # print(type(labels))
+    # print(labels)
 
-    # Semi = SemiLabeling(geo_features, glcm_df, spark)
-    # threshold = Semi.generate_threshold()
-    # print(threshold)
+    Semi = SemiLabeling(geo_features, glcm_df, spark)
+    threshold = Semi.generate_labels()
+    print(threshold)
     #
     # AutoLabel = Automatic(geo_features, glcm_df, spark)
     # rules = AutoLabel.generate_rules(4)

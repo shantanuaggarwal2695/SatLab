@@ -1,5 +1,5 @@
 from math import log2
-
+from snorkel.types import DataPoint
 from pyspark.ml.feature import VectorAssembler
 import numpy as np
 
@@ -13,9 +13,13 @@ class SemiLabeling:
         self.spark = spark
         self.combined_df = self.spark.sql(
             "select geo.origin, geo.Geom, geo.healthcare, geo.malls, geo.schools, geo.waste, geo.road, geo.forest, geo.residential, geo.power, geo.resort, geo.grasslands,text.glcm_contrast_Scaled, text.glcm_dissimilarity_Scaled, text.glcm_homogeneity_Scaled, text.glcm_energy_Scaled, text.glcm_correlation_Scaled, text.glcm_ASM_Scaled from text, geo where text.origin = geo.origin")
+        self.rdd = self.combined_df.rdd
+        self.data_count = self.combined_df.count()
+        self.lfs = self.getweaklabels()
+        self.theta = None
 
     def generate_threshold(self):
-        clustering_prediction = self.getClustering().select("prediction").rdd.map(lambda x:x.prediction).collect()
+        clustering_prediction = self.getClustering().select("prediction").rdd.map(lambda x: x.prediction).collect()
         labeling_functions = self.getweaklabels()
         theta_distribution = []
 
@@ -23,13 +27,12 @@ class SemiLabeling:
             return sum(p[i] * log2(p[i] / q[i]) for i in range(len(p)))
 
         self.combined_df.persist()
-        rdd = self.combined_df.rdd
 
         for i, lf in enumerate(labeling_functions):
             mle_theta = -1
             kl_min = 1
             for theta in np.arange(0.2, 1, 0.2):
-                current_label = rdd.map(lambda x: lf(x, theta)).collect()
+                current_label = self.rdd.map(lambda x: lf(x, theta)).collect()
                 p = [current_label.count(0) / (current_label.count(0) + current_label.count(1)),
                      current_label.count(1) / (current_label.count(0) + current_label.count(1))]
                 q = [clustering_prediction.count(0) / (clustering_prediction.count(0) + clustering_prediction.count(1)),
@@ -40,20 +43,28 @@ class SemiLabeling:
                     kl_min = kl_divergent
                     mle_theta = theta
             theta_distribution.append(mle_theta)
-
+        self.theta = theta_distribution
         return theta_distribution
 
+    def generate_labels(self):
 
+        labels = self.rdd.zipWithIndex().map(lambda x:self.apply_lfs(x)).collect()
+        return labels
 
-
+    def apply_lfs(self, x):
+        labels = []
+        for j, lf in enumerate(self.lfs):
+            y = lf(x[0], self.theta[j])
+            if y >= 0:
+                labels.append((x[1], j, y))
+        return labels
 
     def getClustering(self):
         features = (
-        "healthcare", "malls", "schools", "waste", "road", "forest", "residential", "power", "resort", "grasslands",
-        "glcm_contrast_Scaled", "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled", "glcm_energy_Scaled",
-        "glcm_correlation_Scaled", "glcm_ASM_Scaled")
+            "healthcare", "malls", "schools", "waste", "road", "forest", "residential", "power", "resort", "grasslands",
+            "glcm_contrast_Scaled", "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled", "glcm_energy_Scaled",
+            "glcm_correlation_Scaled", "glcm_ASM_Scaled")
         # features = tuple(features)
-        print(type(features))
         assembler = VectorAssembler(inputCols=features, outputCol="features")
         dataset = assembler.transform(self.combined_df)
         dataset.select("features").show(truncate=False)
@@ -166,6 +177,3 @@ class SemiLabeling:
 
         lfs = [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11, lf12, lf13, lf14, lf15, lf16]
         return lfs
-
-
-
