@@ -59,7 +59,7 @@ class SemiLabeling:
 
         # labels = self.rdd.zipWithIndex().map(apply_lfs).collect()
         # print(labels)
-        print(self.rdd.zipWithIndex().map(lambda x:apply_lfs(x)).collect())
+        print(self.rdd.zipWithIndex().map(lambda x:x[0]).collect())
 
 
 
