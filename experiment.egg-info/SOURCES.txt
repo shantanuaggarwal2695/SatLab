@@ -26,6 +26,7 @@ spark_job/Labeling/manual.py
 spark_job/Labeling/semi.py
 spark_job/Loading/geotiff_loader.py
 spark_job/OpenStreetMap/load_data.py
+spark_job/Testing/metrics.py
 venv/lib64
 venv/pyvenv.cfg
 venv/bin/activate
