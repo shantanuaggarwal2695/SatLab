@@ -1,6 +1,7 @@
 from math import log2
 from pyspark.ml.feature import VectorAssembler
 import numpy as np
+from snorkel.labeling.model import LabelModel
 
 
 class SemiLabeling:
@@ -70,8 +71,7 @@ class SemiLabeling:
                 local_row = local_label[0]
                 local_col = local_label[1]
                 label = local_label[2]
-
-            label_matrix[local_row][local_col] = label
+                label_matrix[local_row][local_col] = label
 
         return label_matrix
 
@@ -193,3 +193,11 @@ class SemiLabeling:
 
         lfs = [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11, lf12, lf13, lf14, lf15, lf16]
         return lfs
+
+    def generate_class(self):
+        L = self.generate_labels()
+        label_model = LabelModel(cardinality=2)
+        label_model.fit(L, n_epochs=500)
+        # y_prob = label_model.predict_proba(L)[:, 1]
+        y_prob = label_model.predict(L)
+        return y_prob

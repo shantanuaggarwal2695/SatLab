@@ -65,9 +65,9 @@ if __name__ == '__main__':
     # print(labels)
 
     Semi = SemiLabeling(geo_features, glcm_df, spark)
-    Semi.generate_labels()
-    # print(threshold)
-    #
+    labels = Semi.generate_class()
+    print(labels)
+
     # AutoLabel = Automatic(geo_features, glcm_df, spark)
     # rules = AutoLabel.generate_rules(4)
     # print(rules)
