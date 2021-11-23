@@ -46,6 +46,8 @@ class SemiLabeling:
 
     def generate_labels(self):
         self.theta = self.generate_threshold()
+        print(self.theta)
+        print(self.lfs)
 
         def apply_lfs(x):
             labels = []
@@ -57,7 +59,7 @@ class SemiLabeling:
 
         # labels = self.rdd.zipWithIndex().map(apply_lfs).collect()
         # print(labels)
-        print(self.rdd.zipWithIndex().collect())
+        print(self.rdd.zipWithIndex().map(lambda x:apply_lfs(x)).collect())
 
 
 
