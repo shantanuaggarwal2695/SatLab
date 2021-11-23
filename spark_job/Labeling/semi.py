@@ -17,8 +17,6 @@ class SemiLabeling:
     def generate_threshold(self):
         clustering_prediction = self.getClustering()
         labeling_functions = self.getweaklabels()
-        thresholds = self.optimize()
-
         theta_distribution = []
 
         def kl(p, q):
@@ -27,7 +25,7 @@ class SemiLabeling:
         self.combined_df.persist()
         rdd = self.combined_df.rdd
 
-        for i, lf in enumerate():
+        for i, lf in enumerate(labeling_functions):
             mle_theta = -1
             kl_min = 1
             for theta in np.arange(0.2, 1, 0.2):
