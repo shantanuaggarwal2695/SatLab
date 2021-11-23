@@ -45,24 +45,20 @@ class SemiLabeling:
         return theta_distribution
 
     def generate_labels(self):
-        self.theta = self.generate_threshold()
-        print(self.theta)
-        print(self.lfs)
+        theta = self.generate_threshold()
+        lfs = self.lfs
 
         def apply_lfs(x):
             labels = []
-            for j, lf in enumerate(self.lfs):
-                y = lf(x[0], self.theta[j])
+            for j, lf in enumerate(lfs):
+                y = lf(x[0], theta[j])
                 if y >= 0:
                     labels.append((x[1], j, y))
             return labels
 
-        # labels = self.rdd.zipWithIndex().map(apply_lfs).collect()
-        # print(labels)
-        print(self.rdd.zipWithIndex().map(lambda x:x[0]).collect())
-
-
-
+        labels = self.rdd.zipWithIndex().map(apply_lfs).collect()
+        print(labels)
+        # print(self.rdd.zipWithIndex().map(lambda x:x[0]).collect())
 
     def getClustering(self):
         features = (
