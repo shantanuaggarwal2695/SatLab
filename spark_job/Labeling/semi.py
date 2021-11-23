@@ -55,8 +55,9 @@ class SemiLabeling:
                     labels.append((x[1], j, y))
             return labels
 
-        labels = self.rdd.zipWithIndex().map(apply_lfs).collect()
-        print(labels)
+        # labels = self.rdd.zipWithIndex().map(apply_lfs).collect()
+        # print(labels)
+        print(self.rdd.zipWithIndex().collect())
 
 
 
