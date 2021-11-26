@@ -48,14 +48,14 @@ if __name__ == '__main__':
 
     loader = Loader("/hdd2/shantanuCodeData/data/scalability_test/set_2/", spark)
     train = loader.load_geotiff()
-    new_train = train.repartition(50000)
-    new_train.show().persist()
+    new_train = train.coalesce(5000)
+    new_train.persist().show()
 
 
     OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
     points, polygons = OSM.transform()
-    points.show().persist()
-    polygons.show().persist()
+    points.persist().show()
+    polygons.persist().show()
 
     spatialfunctions = SpatialFunctions(points, polygons, new_train, spark)
     geo_features = spatialfunctions.combine()
@@ -71,6 +71,8 @@ if __name__ == '__main__':
     geo_features.show()
     glcm_df.show()
 
+    geo_features.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/spatial")
+    glcm_df.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/textural")
 
 
     # ManualLabeling = Manual(geo_features, glcm_df, spark)
