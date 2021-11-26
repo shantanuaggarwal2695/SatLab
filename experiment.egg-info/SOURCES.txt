@@ -21,8 +21,12 @@ spark_job.egg-info/dependency_links.txt
 spark_job.egg-info/top_level.txt
 spark_job/Features/spatial.py
 spark_job/Features/textural.py
+spark_job/Labeling/automatic.py
+spark_job/Labeling/manual.py
+spark_job/Labeling/semi.py
 spark_job/Loading/geotiff_loader.py
 spark_job/OpenStreetMap/load_data.py
+spark_job/Testing/metrics.py
 venv/lib64
 venv/pyvenv.cfg
 venv/bin/activate
@@ -3045,6 +3049,7 @@ venv/lib/python3.7/site-packages/pip-19.0.3-py3.7.egg/EGG-INFO/top_level.txt
 venv/lib/python3.7/site-packages/pip-19.0.3-py3.7.egg/pip/__init__.py
 venv/lib/python3.7/site-packages/pip-19.0.3-py3.7.egg/pip/__main__.py
 venv/lib/python3.7/site-packages/pip-19.0.3-py3.7.egg/pip/__pycache__/__init__.cpython-37.pyc
+venv/lib/python3.7/site-packages/pip-19.0.3-py3.7.egg/pip/__pycache__/__main__.cpython-37.pyc
 venv/lib/python3.7/site-packages/pip-19.0.3-py3.7.egg/pip/_internal/__init__.py
 venv/lib/python3.7/site-packages/pip-19.0.3-py3.7.egg/pip/_internal/build_env.py
 venv/lib/python3.7/site-packages/pip-19.0.3-py3.7.egg/pip/_internal/cache.py

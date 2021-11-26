@@ -141,6 +141,8 @@ class Manual:
         applier = SparkLFApplier(lfs)
         L = applier.apply(self.combined_df.rdd)
         label_model = LabelModel(cardinality=2)
-        label_model.fit(L, n_epochs=200)
-        y_prob = label_model.predict_proba(L)[:, 1]
+        label_model.fit(L, n_epochs=500)
+        # y_prob = label_model.predict_proba(L)[:, 1]
+        y_prob = label_model.predict(L)
         return y_prob
+

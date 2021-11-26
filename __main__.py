@@ -44,6 +44,8 @@ if __name__ == '__main__':
     from spark_job.Features.spatial import SpatialFunctions
     from spark_job.Features.textural import Textural
     from spark_job.Labeling.manual import Manual
+    from spark_job.Labeling.semi import SemiLabeling
+    from spark_job.Labeling.automatic import Automatic
 
     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
     train = loader.load_geotiff()
@@ -57,8 +59,17 @@ if __name__ == '__main__':
     texturalfunctions = Textural(train, spark)
     glcm_df = texturalfunctions.extract_features()
 
-    ManualLabeling = Manual(geo_features, glcm_df, spark)
-    labels = ManualLabeling.produce_labels()
+    # ManualLabeling = Manual(geo_features, glcm_df, spark)
+    # labels = ManualLabeling.produce_labels()
+    # print(type(labels))
+    # print(labels)
+
+    Semi = SemiLabeling(geo_features, glcm_df, spark)
+    labels = Semi.generate_class()
     print(labels)
+
+    # AutoLabel = Automatic(geo_features, glcm_df, spark)
+    # rules = AutoLabel.generate_rules(4)
+    # print(rules)
 
 
