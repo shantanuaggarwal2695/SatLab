@@ -10,8 +10,8 @@ def initiate_session():
         appName("geo_labeling_functions"). \
         config("spark.serializer", KryoSerializer.getName). \
         config("spark.kryo.registrator", SedonaKryoRegistrator.getName). \
-        config("spark.driver.memory", "5g"). \
-        config("spark.executor.memory", "32g"). \
+        config("spark.driver.memory", "20g"). \
+        config("spark.executor.memory", "64g"). \
         config("spark.sql.crossJoin.enabled", "true"). \
         getOrCreate()
 
@@ -68,10 +68,15 @@ if __name__ == '__main__':
     new_train.unpersist()
     glcm_df.persist()
 
-    ManualLabeling = Manual(geo_features, glcm_df, spark)
-    labels = ManualLabeling.produce_labels()
-    print(type(labels))
-    print(labels)
+    geo_features.show()
+    glcm_df.show()
+
+
+
+    # ManualLabeling = Manual(geo_features, glcm_df, spark)
+    # labels = ManualLabeling.produce_labels()
+    # print(type(labels))
+    # print(labels)
 
     # Semi = SemiLabeling(geo_features, glcm_df, spark)
     # labels = Semi.generate_class()
