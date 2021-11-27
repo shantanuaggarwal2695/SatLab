@@ -57,7 +57,7 @@ if __name__ == '__main__':
     # points, polygons = OSM.transform()
     # points.persist().show()
     # polygons.persist().show()
-
+    #
     # spatialfunctions = SpatialFunctions(points, polygons, new_train, spark)
     # geo_features = spatialfunctions.combine()
     # geo_features.persist()
@@ -70,16 +70,13 @@ if __name__ == '__main__':
                             "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
                             "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
     new_train.unpersist()
-    # glcm_df.persist()
-
-    glcm_df.show()
-    glcm_df.printSchema()
+    glcm_df.persist()
 
     # geo_features.show()
     # glcm_df.show()
     #
     # geo_features.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/spatial")
-    glcm_df.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/textural/image_2")
+    glcm_df.coalesce(1).write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/textural/image_2")
 
 
     # ManualLabeling = Manual(geo_features, glcm_df, spark)
