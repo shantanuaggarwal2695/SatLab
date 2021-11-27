@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
     texturalfunctions = Textural(new_train, spark)
     glcm_df = texturalfunctions.extract_features()
-    glcm_df = glcm_df.select("origin", "ST_AsText(Geom) a Geom", "glcm_contrast_Scaled",
+    glcm_df = glcm_df.select("origin", "ST_AsText(Geom) as Geom", "glcm_contrast_Scaled",
                             "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
                             "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
     new_train.unpersist()
