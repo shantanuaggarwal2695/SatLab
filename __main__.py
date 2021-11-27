@@ -50,6 +50,7 @@ if __name__ == '__main__':
     train = loader.load_geotiff()
     new_train = train.coalesce(5000)
     new_train.persist().show()
+    print(new_train.count())
 
 
     # OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
@@ -65,8 +66,11 @@ if __name__ == '__main__':
 
     texturalfunctions = Textural(new_train, spark)
     glcm_df = texturalfunctions.extract_features()
+    glcm_df = glcm_df.select("origin", "ST_AsText(Geom) a Geom", "glcm_contrast_Scaled",
+                            "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
+                            "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
     new_train.unpersist()
-    glcm_df.persist()
+    # glcm_df.persist()
 
     glcm_df.show()
     glcm_df.printSchema()
