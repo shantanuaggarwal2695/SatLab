@@ -69,6 +69,7 @@ if __name__ == '__main__':
     glcm_df.persist()
 
     glcm_df.show()
+    glcm_df.printSchema()
 
     # geo_features.show()
     # glcm_df.show()
