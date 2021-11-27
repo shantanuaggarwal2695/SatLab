@@ -72,7 +72,7 @@ if __name__ == '__main__':
     # glcm_df.show()
     #
     # geo_features.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/spatial")
-    glcm_df.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/textural")
+    glcm_df.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/textural/image")
 
 
     # ManualLabeling = Manual(geo_features, glcm_df, spark)
