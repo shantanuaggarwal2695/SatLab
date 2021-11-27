@@ -68,6 +68,8 @@ if __name__ == '__main__':
     new_train.unpersist()
     glcm_df.persist()
 
+    glcm_df.show()
+
     # geo_features.show()
     # glcm_df.show()
     #
