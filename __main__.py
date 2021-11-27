@@ -46,7 +46,7 @@ if __name__ == '__main__':
     from spark_job.Labeling.semi import SemiLabeling
     from spark_job.Labeling.automatic import Automatic
 
-    loader = Loader("/hdd2/shantanuCodeData/data/scalability_test/set_2/", spark)
+    loader = Loader("/hdd2/shantanuCodeData/data/scalability_test/set_1/", spark)
     train = loader.load_geotiff()
     new_train = train.coalesce(5000)
     new_train.persist().show()
