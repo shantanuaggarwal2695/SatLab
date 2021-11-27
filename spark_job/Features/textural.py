@@ -143,7 +143,7 @@ class Textural:
                                                                                                          i + "_Scaled")).drop(
                 i + "_Vect")
 
-        glcm_features_df = glcm_features_df.select("origin", "ST_AsText(Geom) as Geom", "glcm_contrast_Scaled",
+        glcm_features_df = glcm_features_df.select("origin", "Geom", "glcm_contrast_Scaled",
                                                    "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
                                                    "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
         return glcm_features_df
