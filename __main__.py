@@ -52,26 +52,26 @@ if __name__ == '__main__':
     new_train.persist().show()
 
 
-    OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
-    points, polygons = OSM.transform()
-    points.persist().show()
-    polygons.persist().show()
+    # OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
+    # points, polygons = OSM.transform()
+    # points.persist().show()
+    # polygons.persist().show()
 
-    spatialfunctions = SpatialFunctions(points, polygons, new_train, spark)
-    geo_features = spatialfunctions.combine()
-    geo_features.persist()
-    points.unpersist()
-    polygons.unpersist()
+    # spatialfunctions = SpatialFunctions(points, polygons, new_train, spark)
+    # geo_features = spatialfunctions.combine()
+    # geo_features.persist()
+    # points.unpersist()
+    # polygons.unpersist()
 
     texturalfunctions = Textural(new_train, spark)
     glcm_df = texturalfunctions.extract_features()
     new_train.unpersist()
     glcm_df.persist()
 
-    geo_features.show()
-    glcm_df.show()
-
-    geo_features.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/spatial")
+    # geo_features.show()
+    # glcm_df.show()
+    #
+    # geo_features.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/spatial")
     glcm_df.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/textural")
 
 
