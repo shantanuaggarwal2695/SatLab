@@ -46,37 +46,41 @@ if __name__ == '__main__':
     from spark_job.Labeling.semi import SemiLabeling
     from spark_job.Labeling.automatic import Automatic
 
-    loader = Loader("/hdd2/shantanuCodeData/data/scalability_test/set_2/", spark)
+    loader = Loader("/hdd2/shantanuCodeData/data/scalability_test/set_1/", spark)
     train = loader.load_geotiff()
     new_train = train.coalesce(5000)
     new_train.persist().show()
     print(new_train.count())
 
 
-    # OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
-    # points, polygons = OSM.transform()
-    # points.persist().show()
-    # polygons.persist().show()
-    #
-    # spatialfunctions = SpatialFunctions(points, polygons, new_train, spark)
-    # geo_features = spatialfunctions.combine()
-    # geo_features.persist()
-    # points.unpersist()
-    # polygons.unpersist()
+    OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
+    points, polygons = OSM.transform()
+    points.persist().show()
+    polygons.persist().show()
+
+    spatialfunctions = SpatialFunctions(points, polygons, new_train, spark)
+    geo_features = spatialfunctions.combine()
+    geo_features.persist()
+
+    points.unpersist()
+    polygons.unpersist()
 
     texturalfunctions = Textural(new_train, spark)
     glcm_df = texturalfunctions.extract_features()
-    glcm_df = glcm_df.selectExpr("origin", "ST_AsText(Geom) as Geom", "glcm_contrast_Scaled",
-                            "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
-                            "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
+    # glcm_df = glcm_df.selectExpr("origin", "ST_AsText(Geom) as Geom", "glcm_contrast_Scaled",
+    #                         "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
+    #                         "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
     new_train.unpersist()
     glcm_df.persist()
 
-    # geo_features.show()
-    # glcm_df.show()
+    geo_features.show()
+    glcm_df.show()
+
+
+
     #
     # geo_features.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/spatial")
-    glcm_df.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/textural/image_2")
+    # glcm_df.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/textural/image_2")
 
 
     # ManualLabeling = Manual(geo_features, glcm_df, spark)
@@ -88,8 +92,8 @@ if __name__ == '__main__':
     # labels = Semi.generate_class()
     # print(labels)
 
-    # AutoLabel = Automatic(geo_features, glcm_df, spark)
-    # rules = AutoLabel.generate_rules(4)
-    # print(rules)
+    AutoLabel = Automatic(geo_features, glcm_df, spark)
+    rules = AutoLabel.generate_rules(4)
+    print(rules)
 
 
