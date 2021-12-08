@@ -59,8 +59,7 @@ if __name__ == '__main__':
     polygons.persist().show()
 
     spatialfunctions = SpatialFunctions(points, polygons, new_train, spark)
-    geo_features = spatialfunctions.combine()
-    geo_features.persist()
+    spatialfunctions.combine()
 
     points.unpersist()
     polygons.unpersist()
@@ -70,11 +69,11 @@ if __name__ == '__main__':
     # glcm_df = glcm_df.selectExpr("origin", "ST_AsText(Geom) as Geom", "glcm_contrast_Scaled",
     #                         "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
     #                         "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
-    new_train.unpersist()
-    glcm_df.persist()
-
-    geo_features.show()
-    glcm_df.show()
+    # new_train.unpersist()
+    # glcm_df.persist()
+    #
+    # geo_features.show()
+    # glcm_df.show()
 
 
 
@@ -92,8 +91,8 @@ if __name__ == '__main__':
     # labels = Semi.generate_class()
     # print(labels)
 
-    AutoLabel = Automatic(geo_features, glcm_df, spark)
-    rules = AutoLabel.generate_rules(4)
-    print(rules)
+    # AutoLabel = Automatic(geo_features, glcm_df, spark)
+    # rules = AutoLabel.generate_rules(4)
+    # print(rules)
 
 

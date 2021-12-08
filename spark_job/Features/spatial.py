@@ -31,7 +31,6 @@ class SpatialFunctions:
         max_distance.createOrReplaceTempView("distance_view")
         max_distance_ = self.spark.sql(
             "Select Geom, fixed_Geom , distance from distance_view where distance = (Select max(distance) from distance_view)")
-        max_distance_.show()
         max_distance_.createOrReplaceTempView("max_geom_distance")
         nearest_healthcare_points = self.spark.sql(
             "SELECT temp_healthcare.Geometry, ST_Distance(temp_healthcare.Geometry, bs.Geom)/1000 AS distance FROM temp_healthcare,bs where ST_Distance(temp_healthcare.Geometry, bs.Geom)/1000<=185")
@@ -106,7 +105,6 @@ class SpatialFunctions:
         nearest_waste_points = self.spark.sql(
             "SELECT temp_waste.Geometry, ST_Distance(temp_waste.Geometry, bs.Geom)/1000 AS distance FROM temp_waste,bs where ST_Distance(temp_waste.Geometry, bs.Geom)/1000<=185 ")
         nearest_waste_points.createOrReplaceTempView("waste_nearest")
-        nearest_waste_points.show()
         nearest_waste_points.persist()
         labeling_function_8 = self.spark.sql(
             "Select train.origin, train.Geom, waste_nearest.Geometry, ST_Distance(train.Geom,waste_nearest.Geometry)/1000 as distance from train,waste_nearest")
@@ -242,7 +240,6 @@ class SpatialFunctions:
         green_data = grassland_data.union(meadows_data)
         green_data = green_data.selectExpr("id", "ST_Transform(Geometry, 'epsg:4326','epsg:3857') as Geometry",
                                            "attr_key", "attr_value")
-        green_data.show()
         green_data.persist()
         green_data.createOrReplaceTempView("green_temp")
 
@@ -260,48 +257,60 @@ class SpatialFunctions:
         return labeling_function_14
 
     def combine(self):
-        self.healthcare().createOrReplaceTempView("domain1")
-        self.shopping_malls().createOrReplaceTempView("domain2")
-        self.schools().createOrReplaceTempView("domain3")
-        self.waste().createOrReplaceTempView("domain4")
-        self.roads().createOrReplaceTempView("domain5")
-        self.forest().createOrReplaceTempView("domain6")
-        self.residential().createOrReplaceTempView("domain7")
-        self.power().createOrReplaceTempView("domain8")
-        self.resorts().createOrReplaceTempView("domain9")
-        self.grasslands().createOrReplaceTempView("domain10")
-        geo_features = self.spark.sql(
+        healthcare_df = self.healthcare()
+        shopping_malls_df = self.shopping_malls()
+        schools = self.schools()
+        waste = self.waste()
+        roads = self.roads()
+        forest = self.forest()
+        res = self.residential()
+        pow = self.power()
+        resort = self.resorts()
+        grass = self.grasslands()
 
-            "select domain1.origin, domain1.Geom, domain1.distance_health as healthcare, domain2.distance_malls as malls, domain3.distance_schools as schools, domain4.distance_waste as waste, domain5.distance_road as road, domain6.distance_forest as forest, domain7.distance_res as residential, domain8.distance_pow as power, domain9.distance_resort as resort, domain10.distance_green as greenland from domain1 JOIN domain2 JOIN domain3 JOIN domain4 JOIN domain5 JOIN domain6 JOIN domain7 JOIN domain8 JOIN domain9 JOIN domain10 ON (domain1.origin = domain2.origin AND domain1.origin = domain3.origin AND domain1.origin = domain4.origin AND domain1.origin = domain5.origin AND domain1.origin = domain6.origin AND domain1.origin = domain7.origin AND domain1.origin = domain8.origin AND domain1.origin=domain9.origin AND domain1.origin=domain10.origin)")
-        geo_features.persist()
+        healthcare_df.show()
+        shopping_malls_df.show()
+        schools.show()
+        waste.show()
+        roads.show()
+        forest.show()
+        res.show()
+        pow.show()
+        resort.show()
+        grass.show()
 
-        unlist = udf(lambda x: round(float(list(x)[0]), 3), DoubleType())
-        for i in ["healthcare", "malls", "schools", "waste", "road", "forest", "residential", "power", "resort",
-                  "greenland"]:
-            # VectorAssembler Transformation - Converting column to vector type
-            assembler = VectorAssembler(inputCols=[i], outputCol=i + "_Vect")
-
-            # MinMaxScaler Transformation
-            scaler = MinMaxScaler(inputCol=i + "_Vect", outputCol=i + "_Scaled")
-
-            # Pipeline of VectorAssembler and MinMaxScaler
-            pipeline = Pipeline(stages=[assembler, scaler])
-
-            # Fitting pipeline on dataframe
-            geo_features = pipeline.fit(geo_features).transform(geo_features).withColumn(i + "_Scaled",
-                                                                                         unlist(i + "_Scaled")).drop(
-                i + "_Vect")
-
-        print("After Scaling :")
-        geo_features = geo_features.selectExpr("origin", "Geom", "healthcare_Scaled as healthcare",
-                                               "malls_Scaled as malls", "schools_Scaled as schools",
-                                               "waste_Scaled as waste", "road_Scaled as road",
-                                               "forest_Scaled as forest", "residential_Scaled as residential",
-                                               "power_Scaled as power", "resort_Scaled as resort",
-                                               "greenland_Scaled as grasslands")
-        return geo_features
-
-
+        # geo_features = self.spark.sql(
+        #
+        #     "select domain1.origin, domain1.Geom, domain1.distance_health as healthcare, domain2.distance_malls as malls, domain3.distance_schools as schools, domain4.distance_waste as waste, domain5.distance_road as road, domain6.distance_forest as forest, domain7.distance_res as residential, domain8.distance_pow as power, domain9.distance_resort as resort, domain10.distance_green as greenland from domain1 JOIN domain2 JOIN domain3 JOIN domain4 JOIN domain5 JOIN domain6 JOIN domain7 JOIN domain8 JOIN domain9 JOIN domain10 ON (domain1.origin = domain2.origin AND domain1.origin = domain3.origin AND domain1.origin = domain4.origin AND domain1.origin = domain5.origin AND domain1.origin = domain6.origin AND domain1.origin = domain7.origin AND domain1.origin = domain8.origin AND domain1.origin=domain9.origin AND domain1.origin=domain10.origin)")
+        # geo_features.persist()
+        #
+        # unlist = udf(lambda x: round(float(list(x)[0]), 3), DoubleType())
+        # for i in ["healthcare", "malls", "schools", "waste", "road", "forest", "residential", "power", "resort",
+        #           "greenland"]:
+        #     # VectorAssembler Transformation - Converting column to vector type
+        #     assembler = VectorAssembler(inputCols=[i], outputCol=i + "_Vect")
+        #
+        #     # MinMaxScaler Transformation
+        #     scaler = MinMaxScaler(inputCol=i + "_Vect", outputCol=i + "_Scaled")
+        #
+        #     # Pipeline of VectorAssembler and MinMaxScaler
+        #     pipeline = Pipeline(stages=[assembler, scaler])
+        #
+        #     # Fitting pipeline on dataframe
+        #     geo_features = pipeline.fit(geo_features).transform(geo_features).withColumn(i + "_Scaled",
+        #                                                                                  unlist(i + "_Scaled")).drop(
+        #         i + "_Vect")
+        #
+        # print("After Scaling :")
+        # geo_features = geo_features.selectExpr("origin", "Geom", "healthcare_Scaled as healthcare",
+        #                                        "malls_Scaled as malls", "schools_Scaled as schools",
+        #                                        "waste_Scaled as waste", "road_Scaled as road",
+        #                                        "forest_Scaled as forest", "residential_Scaled as residential",
+        #                                        "power_Scaled as power", "resort_Scaled as resort",
+        #                                        "greenland_Scaled as grasslands")
+        # return geo_features
+        #
+        #
 
 
 

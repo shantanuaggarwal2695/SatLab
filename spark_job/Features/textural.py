@@ -123,29 +123,30 @@ class Textural:
                                                     "GLCM_Corr(gray_scale) as glcm_correlation",
                                                     "GLCM_ASM(gray_scale) as glcm_ASM")
 
-        unlist = udf(lambda x: round(float(list(x)[0]), 3), DoubleType())
-
-        # Iterating over columns to be scaled
-        for i in ["glcm_contrast", "glcm_dissimilarity", "glcm_homogeneity", "glcm_energy", "glcm_correlation",
-                  "glcm_ASM"]:
-            # VectorAssembler Transformation - Converting column to vector type
-            assembler = VectorAssembler(inputCols=[i], outputCol=i + "_Vect")
-
-            # MinMaxScaler Transformation
-            scaler = MinMaxScaler(inputCol=i + "_Vect", outputCol=i + "_Scaled")
-
-            # Pipeline of VectorAssembler and MinMaxScaler
-            pipeline = Pipeline(stages=[assembler, scaler])
-
-            # Fitting pipeline on dataframe
-            glcm_features_df = pipeline.fit(glcm_features_df).transform(glcm_features_df).withColumn(i + "_Scaled",
-                                                                                                     unlist(
-                                                                                                         i + "_Scaled")).drop(
-                i + "_Vect")
-
-        glcm_features_df = glcm_features_df.select("origin", "Geom", "glcm_contrast_Scaled",
-                                                   "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
-                                                   "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
+        # unlist = udf(lambda x: round(float(list(x)[0]), 3), DoubleType())
+        #
+        # # Iterating over columns to be scaled
+        # for i in ["glcm_contrast", "glcm_dissimilarity", "glcm_homogeneity", "glcm_energy", "glcm_correlation",
+        #           "glcm_ASM"]:
+        #     # VectorAssembler Transformation - Converting column to vector type
+        #     assembler = VectorAssembler(inputCols=[i], outputCol=i + "_Vect")
+        #
+        #     # MinMaxScaler Transformation
+        #     scaler = MinMaxScaler(inputCol=i + "_Vect", outputCol=i + "_Scaled")
+        #
+        #     # Pipeline of VectorAssembler and MinMaxScaler
+        #     pipeline = Pipeline(stages=[assembler, scaler])
+        #
+        #     # Fitting pipeline on dataframe
+        #     glcm_features_df = pipeline.fit(glcm_features_df).transform(glcm_features_df).withColumn(i + "_Scaled",
+        #                                                                                              unlist(
+        #                                                                                                  i + "_Scaled")).drop(
+        #         i + "_Vect")
+        #
+        # glcm_features_df = glcm_features_df.select("origin", "Geom", "glcm_contrast_Scaled",
+        #                                            "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
+        #                                            "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
+        glcm_features_df.show()
         return glcm_features_df
 
 
