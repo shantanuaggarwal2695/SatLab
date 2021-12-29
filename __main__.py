@@ -10,14 +10,13 @@ def initiate_session():
         appName("geo_labeling_functions"). \
         config("spark.serializer", KryoSerializer.getName). \
         config("spark.kryo.registrator", SedonaKryoRegistrator.getName). \
-        config("spark.driver.memory", "10g"). \
-        config("spark.executor.memory", "15g"). \
-        config("spark.driver.maxResultSize", "5g"). \
-        config("spark.network.timeout", "1000s"). \
-        config("spark.kryoserializer.buffer.max", "1024"). \
-        config("spark.sql.broadcastTimeout", "36000"). \
+        config("spark.driver.memory", "20g"). \
+        config("spark.executor.memory", "64g"). \
         config("spark.sql.crossJoin.enabled", "true"). \
         getOrCreate()
+
+    # config("spark.driver.maxResultSize", "5g"). \
+
     SedonaRegistrator.registerAll(spark)
     sc = spark.sparkContext
     sc.addPyFile("/hdd2/shantanuCodeData/SatLab/dist/experiment-0.1.0-py3.7.egg")
@@ -47,26 +46,50 @@ if __name__ == '__main__':
     from spark_job.Labeling.semi import SemiLabeling
     from spark_job.Labeling.automatic import Automatic
 
-    loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
+    loader = Loader("/hdd2/shantanuCodeData/data/scalability_test/set_1/", spark)
     train = loader.load_geotiff()
+    new_train = train.coalesce(5000)
+    new_train.persist().show()
+    print(new_train.count())
+
 
     OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
     points, polygons = OSM.transform()
+    points.persist().show()
+    polygons.persist().show()
 
-    spatialfunctions = SpatialFunctions(points, polygons, train, spark)
-    geo_features = spatialfunctions.combine()
+    spatialfunctions = SpatialFunctions(points, polygons, new_train, spark)
+    spatialfunctions.combine()
 
-    texturalfunctions = Textural(train, spark)
+    points.unpersist()
+    polygons.unpersist()
+
+    texturalfunctions = Textural(new_train, spark)
     glcm_df = texturalfunctions.extract_features()
+    # glcm_df = glcm_df.selectExpr("origin", "ST_AsText(Geom) as Geom", "glcm_contrast_Scaled",
+    #                         "glcm_dissimilarity_Scaled", "glcm_homogeneity_Scaled",
+    #                         "glcm_energy_Scaled", "glcm_correlation_Scaled", "glcm_ASM_Scaled")
+    # new_train.unpersist()
+    # glcm_df.persist()
+    #
+    # geo_features.show()
+    # glcm_df.show()
+
+
+
+    #
+    # geo_features.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/spatial")
+    # glcm_df.write.format("csv").save("/hdd2/shantanuCodeData/data/experiments/features/textural/image_2")
+
 
     # ManualLabeling = Manual(geo_features, glcm_df, spark)
     # labels = ManualLabeling.produce_labels()
     # print(type(labels))
     # print(labels)
 
-    Semi = SemiLabeling(geo_features, glcm_df, spark)
-    labels = Semi.generate_class()
-    print(labels)
+    # Semi = SemiLabeling(geo_features, glcm_df, spark)
+    # labels = Semi.generate_class()
+    # print(labels)
 
     # AutoLabel = Automatic(geo_features, glcm_df, spark)
     # rules = AutoLabel.generate_rules(4)
