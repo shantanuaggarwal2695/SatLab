@@ -9,7 +9,7 @@ python setup.py bdist_egg
 
 1. spark_job/Features/texture.py: It contains textural and spatial feature extraqction scripts for satellite images that makes use of map algebra operators, UDF in apache sedona for implementing GLCM matrix and it's metrics
 
-2. spark_job/Features/spatial.py: It contains multiple ways to extract spatial features using images and OpenStreetmap data with a help of spatial joins. Since,these images are high resolution and high number of null sets, we have shown an example of ST_Distance queries for all the images
+2. spark_job/Features/spatial.py: It contains multiple ways to extract spatial features using images and OpenStreetmap data with a help of spatial joins.
 
 3. OpenStreetMap: It contains scripts for loading OSM data in Apache sedona and query them using simple Spark SQL operators.
 
