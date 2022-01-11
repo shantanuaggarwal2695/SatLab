@@ -7,7 +7,7 @@ from sedona.utils import KryoSerializer, SedonaKryoRegistrator
 def initiate_session():
     spark = SparkSession. \
         builder. \
-        appName("geo_labeling_functions"). \
+        appName("vizTest"). \
         config("spark.serializer", KryoSerializer.getName). \
         config("spark.kryo.registrator", SedonaKryoRegistrator.getName). \
         config("spark.driver.memory", "10g"). \
@@ -20,25 +20,12 @@ def initiate_session():
         getOrCreate()
     SedonaRegistrator.registerAll(spark)
     sc = spark.sparkContext
-    sc.addPyFile("/hdd2/shantanuCodeData/SatLab/dist/experiment-0.1.0-py3.7.egg")
+    # sc.addPyFile("/hdd2/shantanuCodeData/SatLab/dist/experiment-0.1.0-py3.7.egg")
 
     return spark
 
-# def run_experiment(spark):
-#     loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
-#     train = loader.load_geotiff()
-#     train.show(2)
-#
-#     # Prepare OSM data
-#     OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
-#     points, polygons = OSM.transform()
-#     points.show(2)
-#     polygons.show(2)
 
-
-if __name__ == '__main__':
-
-    spark = initiate_session()
+def run_job(path,spark):
     from spark_job.Loading.geotiff_loader import Loader
     from spark_job.OpenStreetMap.load_data import LoadOSM
     from spark_job.Features.spatial import SpatialFunctions
@@ -47,7 +34,7 @@ if __name__ == '__main__':
     from spark_job.Labeling.semi import SemiLabeling
     from spark_job.Labeling.automatic import Automatic
 
-    loader = Loader("/hdd2/shantanuCodeData/data/manual_audit/", spark)
+    loader = Loader(path, spark)
     train = loader.load_geotiff()
 
     OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
@@ -59,17 +46,22 @@ if __name__ == '__main__':
     texturalfunctions = Textural(train, spark)
     glcm_df = texturalfunctions.extract_features()
 
-    # ManualLabeling = Manual(geo_features, glcm_df, spark)
-    # labels = ManualLabeling.produce_labels()
+    ManualLabeling = Manual(geo_features, glcm_df, spark)
+    labels = ManualLabeling.produce_labels()
     # print(type(labels))
-    # print(labels)
-
-    Semi = SemiLabeling(geo_features, glcm_df, spark)
-    labels = Semi.generate_class()
     print(labels)
+
+    # Semi = SemiLabeling(geo_features, glcm_df, spark)
+    # labels = Semi.generate_class()
+    # print(labels)
 
     # AutoLabel = Automatic(geo_features, glcm_df, spark)
     # rules = AutoLabel.generate_rules(4)
     # print(rules)
 
+
+# if __name__ == '__main__':
+#
+#     spark = initiate_session()
+#     run_job(spark)
 
