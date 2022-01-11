@@ -10,11 +10,8 @@ class Loader:
     def __init__(self, path):
         self.path = path
 
-    def __int__(self):
-        self.path = ""
 
-
-loader = Loader()
+loader = Loader("")
 
 
 @app.route('/satlab/load', methods=['POST'])
