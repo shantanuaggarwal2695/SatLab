@@ -6,12 +6,33 @@ app = Flask(__name__)
 spark = initiate_session()
 
 
-@app.route('/satlab', methods=['POST'])
+class Loader:
+    def __init__(self, path):
+        self.path = path
+
+    def __int__(self):
+        self.path = ""
+
+
+loader = Loader()
+
+
+@app.route('/satlab/load', methods=['POST'])
+def load():
+    data = request.form
+    path = data['path']
+    loader.path = path
+    return {}
+
+
+@app.route('/satlab/label', methods=['POST'])
 def user():
     if request.method == 'POST':
-        data = request.form
-        path = data["path"]
-        result = run_job(path, spark)
+        try:
+            result = run_job(loader.path, spark)
+        except ValueError:
+            print("wrong path value")
+
         print(result)
 
         return {}
