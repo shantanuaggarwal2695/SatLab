@@ -20,7 +20,7 @@ def initiate_session():
         config("spark.sql.crossJoin.enabled", "true"). \
         getOrCreate()
     SedonaRegistrator.registerAll(spark)
-    sc = spark.sparkContext
+    # sc = spark.sparkContext
     # sc.addPyFile("/hdd2/shantanuCodeData/SatLab/dist/experiment-0.1.0-py3.7.egg")
 
     return spark
