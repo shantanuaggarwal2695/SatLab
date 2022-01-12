@@ -3,13 +3,13 @@ from flask import request
 from logic import *
 
 app = Flask(__name__)
-spark = initiate_session()
 
 
 class Server:
     def __init__(self):
         self.path = None
         self.lfs = None
+        self.spark = None
         # self.spatial = None
         # self.texture = None
 
@@ -30,7 +30,7 @@ def load():
 def user():
     if request.method == 'POST':
         try:
-            result = run_job(loader.path, spark, loader.lfs)
+            result = run_job(loader.path, loader.spark, loader.lfs)
         except ValueError:
             print("wrong path value")
 
@@ -62,4 +62,6 @@ def texture():
 
 
 if __name__ == '__main__':
+    loader.spark = initiate_session()
+
     app.run(debug=True)
