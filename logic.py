@@ -25,7 +25,7 @@ def initiate_session():
     return spark
 
 
-def run_job(path,spark, textural, spatial):
+def run_job(path,spark,index_list=None):
     from spark_job.Loading.geotiff_loader import Loader
     from spark_job.OpenStreetMap.load_data import LoadOSM
     from spark_job.Features.spatial import SpatialFunctions
@@ -46,7 +46,7 @@ def run_job(path,spark, textural, spatial):
     texturalfunctions = Textural(train, spark)
     glcm_df = texturalfunctions.extract_features()
 
-    ManualLabeling = Manual(geo_features, glcm_df, spark)
+    ManualLabeling = Manual(geo_features, glcm_df, spark, index_list)
     labels = ManualLabeling.produce_labels()
     # print(type(labels))
     print(labels)

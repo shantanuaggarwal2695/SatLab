@@ -8,12 +8,13 @@ from snorkel.labeling.apply.spark import SparkLFApplier
 
 
 class Manual:
-    def __init__(self, geo_df, text_df, spark):
+    def __init__(self, geo_df, text_df, spark, index_list):
         self.geo = geo_df
         self.text = text_df
         self.geo.createOrReplaceTempView("geo");
         self.text.createOrReplaceTempView("text")
         self.spark = spark
+        self.index_list = index_list
         self.combined_df = self.spark.sql(
             "select geo.origin, geo.Geom, geo.healthcare, geo.malls, geo.schools, geo.waste, geo.road, geo.forest, geo.residential, geo.power, geo.resort, geo.grasslands,text.glcm_contrast_Scaled, text.glcm_dissimilarity_Scaled, text.glcm_homogeneity_Scaled, text.glcm_energy_Scaled, text.glcm_correlation_Scaled, text.glcm_ASM_Scaled from text, geo where text.origin = geo.origin")
 
@@ -138,6 +139,9 @@ class Manual:
 
     def produce_labels(self):
         lfs = self.construct_labeling()
+        # Based on indexes from the user
+        lfs = map(lfs.__getitem__, self.index_list)
+
         applier = SparkLFApplier(lfs)
         L = applier.apply(self.combined_df.rdd)
         label_model = LabelModel(cardinality=2)

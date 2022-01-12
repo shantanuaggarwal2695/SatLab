@@ -9,8 +9,9 @@ spark = initiate_session()
 class Server:
     def __init__(self):
         self.path = None
-        self.spatial = None
-        self.texture = None
+        self.lfs = None
+        # self.spatial = None
+        # self.texture = None
 
 
 loader = Server()
@@ -18,9 +19,10 @@ loader = Server()
 
 @app.route('/satlab/load', methods=['POST'])
 def load():
-    data = request.form
+    data = request.get_json(force=True)
     path = data['path']
     loader.path = path
+    print(path)
     return {}
 
 
@@ -28,7 +30,7 @@ def load():
 def user():
     if request.method == 'POST':
         try:
-            result = run_job(loader.path, spark, texture, spatial)
+            result = run_job(loader.path, spark, loader.lfs)
         except ValueError:
             print("wrong path value")
 
@@ -45,18 +47,18 @@ def user():
         # return response
 
 
-@app.route('/satlab/textural', methods=['POST'])
+@app.route('/satlab/labelingfunctions', methods=['POST'])
 def texture():
     data = request.form
-    loader.texture = data['texture']
+    loader.lfs = data['lf_index']
     return {}
 
 
-@app.route('/satlab/spatial', method=['POST'])
-def spatial():
-    data = request.form
-    loader.spatial = data['spatial']
-    return {}
+# @app.route('/satlab/spatial', method=['POST'])
+# def spatial():
+#     data = request.form
+#     loader.spatial = data['spatial']
+#     return {}
 
 
 if __name__ == '__main__':
