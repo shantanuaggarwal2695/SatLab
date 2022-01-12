@@ -6,12 +6,14 @@ app = Flask(__name__)
 spark = initiate_session()
 
 
-class Loader:
-    def __init__(self, path):
-        self.path = path
+class Server:
+    def __init__(self):
+        self.path = None
+        self.spatial = None
+        self.texture = None
 
 
-loader = Loader("")
+loader = Server()
 
 
 @app.route('/satlab/load', methods=['POST'])
@@ -26,7 +28,7 @@ def load():
 def user():
     if request.method == 'POST':
         try:
-            result = run_job(loader.path, spark)
+            result = run_job(loader.path, spark, texture, spatial)
         except ValueError:
             print("wrong path value")
 
@@ -41,6 +43,20 @@ def user():
         #     response.append(record)
         #
         # return response
+
+
+@app.route('/satlab/textural', methods=['POST'])
+def texture():
+    data = request.form
+    loader.texture = data['texture']
+    return {}
+
+
+@app.route('/satlab/spatial', method=['POST'])
+def spatial():
+    data = request.form
+    loader.spatial = data['spatial']
+    return {}
 
 
 if __name__ == '__main__':

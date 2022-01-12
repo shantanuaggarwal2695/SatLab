@@ -25,7 +25,7 @@ def initiate_session():
     return spark
 
 
-def run_job(path,spark):
+def run_job(path,spark, textural, spatial):
     from spark_job.Loading.geotiff_loader import Loader
     from spark_job.OpenStreetMap.load_data import LoadOSM
     from spark_job.Features.spatial import SpatialFunctions
