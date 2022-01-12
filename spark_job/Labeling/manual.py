@@ -140,7 +140,7 @@ class Manual:
     def produce_labels(self):
         lfs = self.construct_labeling()
         # Based on indexes from the user
-        lfs = map(lfs.__getitem__, self.index_list)
+        lfs = [lfs[i] for i in self.index_list]
 
         applier = SparkLFApplier(lfs)
         L = applier.apply(self.combined_df.rdd)

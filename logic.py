@@ -8,6 +8,7 @@ def initiate_session():
     spark = SparkSession. \
         builder. \
         appName("vizTest"). \
+        master("spark://EN4119508L.cidse.dhcp.asu.edu:7077").\
         config("spark.serializer", KryoSerializer.getName). \
         config("spark.kryo.registrator", SedonaKryoRegistrator.getName). \
         config("spark.driver.memory", "10g"). \
