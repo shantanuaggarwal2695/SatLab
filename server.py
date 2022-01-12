@@ -49,7 +49,7 @@ def user():
 
 @app.route('/satlab/labelingfunctions', methods=['POST'])
 def texture():
-    data = request.form
+    data = request.get_json()
     loader.lfs = data['lf_index']
     return {}
 
