@@ -36,7 +36,10 @@ def user():
 
         print(result)
 
-        return result
+        return {"data": [
+            {"ID": image.origin, "Geom": image.Geom, "Label": image.Label}
+            for image in result
+        ]}
         # response = []
         # record = dict()
         # for row in result:
