@@ -8,8 +8,11 @@ class SpatialFunctions:
     def __init__(self, points, polygons, train, spark):
         self.osm_points = points
         self.osm_polygons = polygons
+        self.osm_points.persist()
+        self.osm_polygons.persist()
         self.spark = spark
         self.train = train
+        self.train.persist()
         self.train.createOrReplaceTempView("train")
         bs_df = self.spark.sql(
             "Select ST_Transform(ST_PointFromText('-58.381592,-34.603722',','), 'epsg:4326','epsg:3857') as Geom")

@@ -8,6 +8,7 @@ def initiate_session():
     spark = SparkSession. \
         builder. \
         appName("vizTest"). \
+        master("spark://EN4119508L.cidse.dhcp.asu.edu:7077").\
         config("spark.serializer", KryoSerializer.getName). \
         config("spark.kryo.registrator", SedonaKryoRegistrator.getName). \
         config("spark.driver.memory", "10g"). \
@@ -37,8 +38,9 @@ def run_job(path,spark,index_list=None):
     loader = Loader(path, spark)
     train = loader.load_geotiff()
 
-    OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
-    points, polygons = OSM.transform()
+    # OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
+    # points, polygons = OSM.transform()
+    points , polygons = LoadOSM("/hdd2/shantanuCodeData/data/demo_parquet/", spark)
 
     spatialfunctions = SpatialFunctions(points, polygons, train, spark)
     geo_features = spatialfunctions.combine()
