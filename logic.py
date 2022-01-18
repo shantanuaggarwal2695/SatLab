@@ -52,7 +52,7 @@ def run_job(path,spark,index_list=None):
     ManualLabeling = Manual(geo_features, glcm_df, spark, index_list)
     labels = ManualLabeling.produce_labels()
     # print(type(labels))
-    print(labels)
+    return labels
 
     # Semi = SemiLabeling(geo_features, glcm_df, spark)
     # labels = Semi.generate_class()

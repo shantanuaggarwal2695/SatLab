@@ -148,5 +148,9 @@ class Manual:
         label_model.fit(L, n_epochs=500)
         # y_prob = label_model.predict_proba(L)[:, 1]
         y_prob = label_model.predict(L)
-        return y_prob
+        pandas_df = self.combined_df.select("origin", "Geom").toPandas()
+        pandas_df['Label'] = y_prob
+
+        result = pandas_df.to_dict("records")
+        return result
 

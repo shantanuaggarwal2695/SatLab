@@ -36,7 +36,7 @@ def user():
 
         print(result)
 
-        return {}
+        return result
         # response = []
         # record = dict()
         # for row in result:
