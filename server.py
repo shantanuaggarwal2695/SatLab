@@ -23,6 +23,7 @@ loader = Server()
 @app.route('/satlab/load', methods=['POST'])
 def load():
     data = request.get_json(force=True)
+    print(data)
     path = data['path']
     loader.path = path
     print(path)
