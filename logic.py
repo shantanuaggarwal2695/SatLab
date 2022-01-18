@@ -40,7 +40,8 @@ def run_job(path,spark,index_list=None):
 
     # OSM = LoadOSM("/hdd2/shantanuCodeData/data/pbf/slum_data/", spark)
     # points, polygons = OSM.transform()
-    points , polygons = LoadOSM("/hdd2/shantanuCodeData/data/demo_parquet/", spark)
+    OSM = LoadOSM("/hdd2/shantanuCodeData/data/demo_parquet/", spark)
+    points, polygons = OSM.transform()
 
     spatialfunctions = SpatialFunctions(points, polygons, train, spark)
     geo_features = spatialfunctions.combine()
