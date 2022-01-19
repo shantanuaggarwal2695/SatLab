@@ -143,6 +143,7 @@ class Manual:
         lfs = [lfs[i-1] for i in self.index_list]
 
         applier = SparkLFApplier(lfs)
+        self.combined_df.rdd.collect()
         L = applier.apply(self.combined_df.rdd)
         label_model = LabelModel(cardinality=2)
         label_model.fit(L, n_epochs=500)
