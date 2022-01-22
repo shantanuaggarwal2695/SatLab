@@ -41,29 +41,27 @@ def load():
     if request.method == 'POST':
         # check if the post request has the file part
 
-        for dict in request.files:
-            print(dict['file'])
-
-
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
 
         # print(request.files['file'])
-        file = request.files['file']
+        files = request.files.getlist('file')
+        # file = request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        # print("file name is"+ file.filename)
+        for file in files:
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            # print("file name is"+ file.filename)
 
-        print(allowed_file(file.filename))
-        if file and allowed_file(file.filename):
-            print("innnnnnnnnnnnnn")
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('download_file', name=filename))
+            print(allowed_file(file.filename))
+            if file and allowed_file(file.filename):
+                print("innnnnnnnnnnnnn")
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                return redirect(url_for('download_file', name=filename))
     return {}
 
 
