@@ -174,8 +174,7 @@ class Manual:
         label_model.fit(L, n_epochs=500)
         # y_prob = label_model.predict_proba(L)[:, 1]
         y_prob = label_model.predict(L)
-        pandas_df = self.combined_df.selectExpr("origin", "ST_AsText(ST_Transform(Geom,'epsg:3857','epsg:4326' )) as "
-                                                          "Geom").toPandas()
+        pandas_df = self.combined_df.selectExpr("origin", "ST_AsText(ST_Transform(Geom,'epsg:3857','epsg:4326' )) as Geom").toPandas()
         pandas_df['Label'] = y_prob
 
         def Long_from_geom(geom):
