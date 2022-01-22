@@ -31,7 +31,6 @@ def allowed_file(filename):
 @app.route('/satlab/load', methods=['GET', 'POST'])
 def load():
 
-    print(request)
 
     # data = request.get_json(force=True)
     # print(data)
@@ -40,13 +39,13 @@ def load():
     # print(path)
     # return {}
     # print("helloooooooooooooooooo")
-    # if request.method == 'POST':
-    #     # check if the post request has the file part
-    #     if 'file' not in request.files:
-    #         flash('No file part')
-    #         return redirect(request.url)
-    #
-    #     print(request)
+    if request.method == 'POST':
+        # check if the post request has the file part
+        # if 'file' not in request.files:
+        #     flash('No file part')
+        #     return redirect(request.url)
+
+        print(request)
         # file = request.FileList['file']
         # # If the user does not select a file, the browser submits an
         # # empty file without a filename.
