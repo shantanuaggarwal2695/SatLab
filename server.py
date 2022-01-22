@@ -5,7 +5,7 @@ from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = '/hdd2/shantanuCodeData/data/demo_parquet/train_demo'
-# ALLOWED_EXTENSIONS = {'.tif', '.tiff', '.pdf'}
+ALLOWED_EXTENSIONS = {'pdf'}
 app = Flask(__name__)
 app.secret_key = "super secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -23,6 +23,7 @@ class Server:
 
 loader = Server()
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -30,8 +31,6 @@ def allowed_file(filename):
 
 @app.route('/satlab/load', methods=['GET', 'POST'])
 def load():
-
-
     # data = request.get_json(force=True)
     # print(data)
     # path = data['path']
@@ -63,7 +62,6 @@ def load():
     return {}
 
 
-
 @app.route('/satlab/label', methods=['POST'])
 def user():
     if request.method == 'POST':
@@ -75,7 +73,8 @@ def user():
         print(result)
 
         return {"data": [
-            {"ID": image['origin'], "Geom": image['Geom'], "Label": image['Label'], "Long":image['long'], "Lat":image['lat']}
+            {"ID": image['origin'], "Geom": image['Geom'], "Label": image['Label'], "Long": image['long'],
+             "Lat": image['lat']}
             for image in result
         ]}
         # response = []
@@ -104,6 +103,5 @@ def texture():
 
 if __name__ == '__main__':
     loader.spark = initiate_session()
-
 
     app.run(debug=True)
