@@ -51,6 +51,7 @@ def load():
         # empty file without a filename.
         if file.filename == '':
             flash('No selected file')
+            print("emptyyyyyyyyyyyyyyy")
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
