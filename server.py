@@ -68,27 +68,23 @@ def load():
 
 @app.route('/satlab/label', methods=['POST'])
 def user():
-    if request.method == 'POST':
-        try:
-            result = run_job(loader.path, loader.spark, loader.lfs)
-        except ValueError:
-            print("wrong path value")
+    # if request.method == 'POST':
+    #     try:
+    #         result = run_job(loader.path, loader.spark, loader.lfs)
+    #     except ValueError:
+    #         print("wrong path value")
+    #
+    #     print(result)
+    #
+    #     return {"data": [
+    #         {"ID": image['origin'], "Geom": image['Geom'], "Label": image['Label'], "Long": image['long'],
+    #          "Lat": image['lat']}
+    #         for image in result
+    #     ]}
 
-        print(result)
+    data = request.get_json()
+    print(data)
 
-        return {"data": [
-            {"ID": image['origin'], "Geom": image['Geom'], "Label": image['Label'], "Long": image['long'],
-             "Lat": image['lat']}
-            for image in result
-        ]}
-        # response = []
-        # record = dict()
-        # for row in result:
-        #     record["id"] = row[0]
-        #     record["label"] = row[1]
-        #     response.append(record)
-        #
-        # return response
 
 
 @app.route('/satlab/labelingfunctions', methods=['POST'])
