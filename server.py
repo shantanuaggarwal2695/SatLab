@@ -51,9 +51,10 @@ def load():
         # empty file without a filename.
         if file.filename == '':
             flash('No selected file')
-            print("emptyyyyyyyyyyyyyyy")
             return redirect(request.url)
+        print("file name is"+ file.filename)
         if file and allowed_file(file.filename):
+            print("innnnnnnnnnnnnn")
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('download_file', name=filename))
