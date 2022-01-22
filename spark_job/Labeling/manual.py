@@ -6,7 +6,7 @@ from pyspark.sql import SQLContext
 from snorkel.labeling.model import LabelModel
 from snorkel.labeling.apply.spark import SparkLFApplier
 
-
+thresholds = [0]*16
 class Manual:
     def __init__(self, geo_df, text_df, spark, index_list):
         self.geo = geo_df
@@ -25,112 +25,132 @@ class Manual:
 
         @labeling_function()
         def lf1(x):
-            if x.healthcare < 0.1:
+            # 0.1
+            if x.healthcare < thresholds[0]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf2(x):
-            if x.malls < 0.11:
+            # 0.11
+            if x.malls < thresholds[1]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf3(x):
-            if x.schools < 0.12:
+            # 0.12
+            if x.schools < thresholds[2]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf4(x):
-            if x.waste < 0.1:
+            # 0.1
+            if x.waste < thresholds[3]:
                 return SLUM
             else:
                 return NON_SLUM
 
         @labeling_function()
         def lf5(x):
-            if x.forest < 0.07:
+            #0.07
+            if x.forest < thresholds[4]:
                 return SLUM
             else:
                 return NON_SLUM
 
         @labeling_function()
         def lf6(x):
-            if x.power < 0.05:
+            # 0.05
+            if x.power < thresholds[5]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf7(x):
-            if x.residential < 0.2:
+            # 0.2
+            if x.residential < thresholds[6]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf8(x):
-            if x.road < 0.05:
+            # 0.05
+            if x.road < thresholds[7]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf9(x):
-            if x.resort < 0.07:
+            # 0.07
+            if x.resort < thresholds[8]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf10(x):
-            if x.grasslands < 0.57:
+
+            #0.57
+            if x.grasslands < thresholds[9]:
                 return SLUM
             else:
                 return NON_SLUM
 
         @labeling_function()
         def lf11(x):
-            if x.glcm_contrast_Scaled < 0.8:
+            #0.8
+            if x.glcm_contrast_Scaled < thresholds[10]:
                 return SLUM
             else:
                 return NON_SLUM
 
         @labeling_function()
         def lf12(x):
-            if x.glcm_dissimilarity_Scaled < 0.65:
+            #0.65
+            if x.glcm_dissimilarity_Scaled < thresholds[11]:
                 return SLUM
             else:
                 return NON_SLUM
 
         @labeling_function()
         def lf13(x):
-            if x.glcm_homogeneity_Scaled < 0.25:
+            # 0.25
+            if x.glcm_homogeneity_Scaled < thresholds[12]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf14(x):
-            if x.glcm_energy_Scaled <= 0.10:
+
+            # 0.10
+            if x.glcm_energy_Scaled <= thresholds[13]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf15(x):
-            if x.glcm_correlation_Scaled <= 0.2:
+
+            #0.2
+            if x.glcm_correlation_Scaled <= thresholds[14]:
                 return NON_SLUM
             else:
                 return SLUM
 
         @labeling_function()
         def lf16(x):
-            if x.glcm_ASM_Scaled < 0.6:
+
+            #0.6
+            if x.glcm_ASM_Scaled < thresholds[15]:
                 return NON_SLUM
             else:
                 return SLUM
@@ -138,9 +158,14 @@ class Manual:
         return [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11, lf12, lf13, lf14, lf15, lf16]
 
     def produce_labels(self):
+
+        for tuple in self.index_list:
+            thresholds[tuple[0]-1] = tuple[1]
+
         lfs = self.construct_labeling()
         # Based on indexes from the user
-        lfs = [lfs[i-1] for i in self.index_list]
+        # lfs = [lfs[i-1] for i in self.index_list]
+        lfs = [lfs[tuple[0]-1] for tuple in self.index_list]
 
         applier = SparkLFApplier(lfs)
         print(self.combined_df.rdd.collect())
