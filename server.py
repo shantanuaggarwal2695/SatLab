@@ -83,7 +83,14 @@ def user():
     #     ]}
 
     data = request.get_json()
-    print(data)
+    try:
+        result = run_job(UPLOAD_FOLDER, loader.spark, data['lf_index'])
+    except ValueError:
+        print("wrong path value")
+
+    print(result)
+
+
     return {}
 
 
