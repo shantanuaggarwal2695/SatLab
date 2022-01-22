@@ -45,7 +45,7 @@ def load():
         #     flash('No file part')
         #     return redirect(request.url)
 
-        print(request.data)
+        print(request.get_data())
         # file = request.FileList['file']
         # # If the user does not select a file, the browser submits an
         # # empty file without a filename.
@@ -71,7 +71,7 @@ def user():
         print(result)
 
         return {"data": [
-            {"ID": image['origin'], "Geom": image['Geom'], "Label": image['Label']}
+            {"ID": image['origin'], "Geom": image['Geom'], "Label": image['Label'], "Long":image['long'], "Lat":image['lat']}
             for image in result
         ]}
         # response = []
