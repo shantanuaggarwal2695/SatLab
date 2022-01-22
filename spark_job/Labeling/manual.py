@@ -190,5 +190,7 @@ class Manual:
         pandas_df['lat'] = pandas_df['Geom'].map(lat_from_geom)
 
         result = pandas_df.to_dict("records")
+
+        print(result)
         return result
 

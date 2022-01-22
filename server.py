@@ -5,7 +5,7 @@ from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = '/hdd2/shantanuCodeData/data/demo_parquet/train_demo'
-ALLOWED_EXTENSIONS = {'tif','pdf'}
+ALLOWED_EXTENSIONS = {'tif', 'pdf'}
 app = Flask(__name__)
 app.secret_key = "super secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -83,16 +83,12 @@ def user():
     #     ]}
 
     data = request.get_json()
-    try:
-        result = run_job(UPLOAD_FOLDER, loader.spark, data['lf_index'])
-    except ValueError:
-        print("wrong path value")
+
+    result = run_job(UPLOAD_FOLDER, loader.spark, data['lf_index'])
 
     print(result)
 
-
     return {}
-
 
 
 @app.route('/satlab/labelingfunctions', methods=['POST'])
