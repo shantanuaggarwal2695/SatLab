@@ -28,7 +28,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/satlab/load', methods=['POST'])
+@app.route('/satlab/load', methods=['GET', 'POST'])
 def load():
 
     # data = request.get_json(force=True)
