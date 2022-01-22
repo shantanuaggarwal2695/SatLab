@@ -46,6 +46,7 @@ def load():
 
         # print(request.files['file'])
         file = request.files['file']
+        print(file)
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
