@@ -45,7 +45,7 @@ def load():
         #     flash('No file part')
         #     return redirect(request.url)
 
-        print(request.files)
+        print(request.get_json())
         # file = request.FileList['file']
         # # If the user does not select a file, the browser submits an
         # # empty file without a filename.
