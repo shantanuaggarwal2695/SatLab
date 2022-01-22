@@ -2,11 +2,13 @@ from logic import *
 from flask_cors import CORS
 import os
 from flask import Flask, flash, request, redirect, url_for
+from flask.ext.session import Session
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = '/hdd2/shantanuCodeData/data/demo_parquet/train_demo'
 ALLOWED_EXTENSIONS = {'.tif', '.tiff'}
 app = Flask(__name__)
+app.secret_key = "super secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CORS(app)
 
@@ -97,5 +99,6 @@ def texture():
 
 if __name__ == '__main__':
     loader.spark = initiate_session()
+
 
     app.run(debug=True)
