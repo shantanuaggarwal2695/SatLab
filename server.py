@@ -1,10 +1,13 @@
-from flask import Flask
-from flask import request
 from logic import *
 from flask_cors import CORS
+import os
+from flask import Flask, flash, request, redirect, url_for
+from werkzeug.utils import secure_filename
 
-
+UPLOAD_FOLDER = '/hdd2/shantanuCodeData/data/demo_parquet/train_demo'
+ALLOWED_EXTENSIONS = {'.tif', '.tiff'}
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CORS(app)
 
 
@@ -19,15 +22,37 @@ class Server:
 
 loader = Server()
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route('/satlab/load', methods=['POST'])
 def load():
-    data = request.get_json(force=True)
-    print(data)
-    path = data['path']
-    loader.path = path
-    print(path)
+
+    # data = request.get_json(force=True)
+    # print(data)
+    # path = data['path']
+    # loader.path = path
+    # print(path)
+    # return {}
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('download_file', name=filename))
     return {}
+
 
 
 @app.route('/satlab/label', methods=['POST'])
