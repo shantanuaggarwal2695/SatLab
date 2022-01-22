@@ -177,16 +177,18 @@ class Manual:
         pandas_df = self.combined_df.selectExpr("origin", "ST_AsText(ST_Transform(Geom,'epsg:3857','epsg:4326' )) as "
                                                           "Geom").toPandas()
         pandas_df['Label'] = y_prob
-        pandas_df['long'] = pandas_df['Geom'].map(self.Long_from_geom)
-        pandas_df['lat'] = pandas_df['Geom'].map(self.lat_from_geom)
+
+        def Long_from_geom(geom):
+            a = geom.split("(")[-1].strip(')').split(" ")
+            return float(a[0])
+
+        def lat_from_geom(geom):
+            a = geom.split("(")[-1].strip(')').split(" ")
+            return float(a[1])
+
+        pandas_df['long'] = pandas_df['Geom'].map(Long_from_geom)
+        pandas_df['lat'] = pandas_df['Geom'].map(lat_from_geom)
 
         result = pandas_df.to_dict("records")
         return result
 
-    def Long_from_geom(geom):
-        a = geom.split("(")[-1].strip(')').split(" ")
-        return float(a[0])
-
-    def lat_from_geom(geom):
-        a = geom.split("(")[-1].strip(')').split(" ")
-        return float(a[1])
