@@ -5,7 +5,7 @@ from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = '/hdd2/shantanuCodeData/data/demo_parquet/train_demo'
-ALLOWED_EXTENSIONS = {'.tif', '.tiff'}
+ALLOWED_EXTENSIONS = {'.tif', '.tiff', '.pdf'}
 app = Flask(__name__)
 app.secret_key = "super secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -41,21 +41,21 @@ def load():
     # print("helloooooooooooooooooo")
     if request.method == 'POST':
         # check if the post request has the file part
-        # if 'file' not in request.files:
-        #     flash('No file part')
-        #     return redirect(request.url)
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
 
-        print(request.files['file'])
-        # file = request.FileList['file']
-        # # If the user does not select a file, the browser submits an
-        # # empty file without a filename.
-        # if file.filename == '':
-        #     flash('No selected file')
-        #     return redirect(request.url)
-        # if file and allowed_file(file.filename):
-        #     filename = secure_filename(file.filename)
-        #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        #     return redirect(url_for('download_file', name=filename))
+        # print(request.files['file'])
+        file = request.FileList['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('download_file', name=filename))
     return {}
 
 
