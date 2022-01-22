@@ -183,7 +183,7 @@ class Manual:
 
         def lat_from_geom(geom):
             a = geom.split("(")[-1].strip(')').split(" ")
-            return float(a[1])
+            return float(a[1].strip(","))
 
         pandas_df['long'] = pandas_df['Geom'].map(Long_from_geom)
         pandas_df['lat'] = pandas_df['Geom'].map(lat_from_geom)
