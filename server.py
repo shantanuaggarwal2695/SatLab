@@ -40,7 +40,11 @@ def load():
     # print("helloooooooooooooooooo")
     if request.method == 'POST':
         # check if the post request has the file part
-        print(request.files)
+
+        for dict in request.files:
+            print(dict['file'])
+
+
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
