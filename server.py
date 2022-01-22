@@ -84,6 +84,7 @@ def user():
 
     data = request.get_json()
     print(data)
+    return {}
 
 
 
