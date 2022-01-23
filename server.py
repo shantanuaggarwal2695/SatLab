@@ -88,7 +88,11 @@ def user():
 
     print(result)
 
-    return {}
+    return {"data": [
+        {"ID": image['origin'], "Geom": image['Geom'], "Label": image['Label'], "Long": image['long'],
+         "Lat": image['lat']}
+        for image in result
+    ]}
 
 
 @app.route('/satlab/labelingfunctions', methods=['POST'])
