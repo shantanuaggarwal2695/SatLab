@@ -4,4 +4,7 @@ dential, industrial, highways, forest, grassland, crops and pasture) in Europe. 
 Link: https://github.com/phelber/EuroSAT
 
 textual.csv: preprocessed images for EuroSAT with textural features
+
+
+
 spatial.csv: preprocessed images for EuroSAT with spatial features using spatial operators like ST_Contains(), ST_Within(), ST_Distance(), ST_Overlap() and ST_Touches()
