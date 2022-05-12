@@ -7,6 +7,8 @@ This work contains two folders:
 
 2. water_labeling: This folder corresponds to water-land labeling application with dataset from EuroSAT images.
 
+We also show as user how to package every module in an .egg file for Pyspark and submit it to spark cluster using master node in slum_labeling folder which is very similar to running .jar file using spark
+
 **These labeling functions can be changed with respect to different applications
 **
 
